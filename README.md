@@ -13,7 +13,7 @@ Build a unified platform that streamlines **POS**, **Inventory/Warehouse**, **Or
 
 ### Details of Core Features
 
-#### POS & Billing (Touch‑First, Offline)
+#### POS & Billing (Touch‑First, Online)
 - Scan/search products, quick keypad, discounts (৳/%), split/partial payments
 - **bKash/Nagad**/**cards/COD**; thermal receipts (BN/EN); **offline queue & sync**
 
