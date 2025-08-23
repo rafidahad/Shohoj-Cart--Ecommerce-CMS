@@ -1,7 +1,7 @@
-# Sohoj Cart - E‑Commerce CMS
+# Shohoj Cart - E‑Commerce CMS
 
 ### Project Title
-**Sohoj Cart** — A Comprehensive Retail Commerce OS for Bangladesh (BDT‑first)
+**Shohoj Cart** — A Comprehensive Retail Commerce OS for Bangladesh (BDT‑first)
 
 ### Project Objective
 Build a unified platform that streamlines **POS**, **Inventory/Warehouse**, **Orders & Delivery**, **CRM**, **Promotions**, **Reports/Analytics**, a Shopify‑style **Theme & Content Editor**, and an **AI Assistant**. The goal is a fast, role‑aware CMS that reduces operational friction, supports **offline POS**, and localizes experiences for Bangladeshi retailers in **BDT** with **BN/EN**.
