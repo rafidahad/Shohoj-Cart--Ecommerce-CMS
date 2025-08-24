@@ -1,4 +1,33 @@
-import { useState } from 'react';
+// resources/js/Layouts/AuthLayout.jsx
+import React from 'react';
+
+export default function AuthLayout({ children, title }) {
+  return (
+    <div className="min-h-screen flex flex-col justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        {/* You can put your logo here */}
+        <img
+          className="mx-auto h-12 w-auto"
+          src="/images/logo.svg" // replace with your logo path or URL
+          alt="Your Logo"
+        />
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">{title}</h2>
+        <p className="mt-2 text-center text-sm text-gray-600 max-w">
+          {/* You can customize this or pass as prop */}
+        </p>
+      </div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-6 shadow rounded-lg sm:px-10">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+/*import { useState } from 'react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
@@ -123,3 +152,4 @@ export default function Authenticated({ user, header, children }) {
         </div>
     );
 }
+*/
