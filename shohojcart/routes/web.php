@@ -24,25 +24,10 @@ Route::get('/login', function () {
     return Inertia::render('Auth/Login');
 })->name('login');
 
-//Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-
-
-
 Route::get('/register', function () {
     return Inertia::render('Auth/Register');
 })->name('register');
 
-
-/*
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
-*/
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
