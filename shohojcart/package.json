@@ -1,4 +1,11 @@
 {
+    
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
     "private": true,
     "type":"module",
     "scripts": {
