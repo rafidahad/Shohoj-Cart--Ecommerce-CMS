@@ -1,0 +1,25 @@
+/* Reset default browser styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Full page setup */
+body, html {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(to bottom, #2e00b4, #4c00b4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Ensures container is centered */
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
