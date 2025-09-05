@@ -1,4 +1,4 @@
-.container{
+.container {
     display: flex;
     flex-direction: column;
     margin: auto;
@@ -26,7 +26,7 @@
 .underline {
     width: 61px;
     height: 6px;
-    background: #3c009d ;
+    background: #3c009d;
     border-radius: 9px;
 }
 
