@@ -10,7 +10,7 @@ function Login() {
     const location = useLocation();
 
   return (
-    <div classname="container">
+    <div className='container'>
         <div className="header">
             <div className="text">Login</div>
             <div className="underline"></div>
@@ -33,7 +33,7 @@ function Login() {
 
         <div className="submit-container">
             <div className={location.pathname === "/signup" ? "submit gray" : "submit"} onClick={() => navigate("/signup")}>Sign Up</div>
-            <div className={location.pathname === "login" ? "submit gray" : "submit"}>Login</div>
+            <div className={location.pathname === "/login" ? "submit gray" : "submit"}>Login</div>
         </div>
     </div>
   )
