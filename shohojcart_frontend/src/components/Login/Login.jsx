@@ -4,27 +4,67 @@ import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL ;
+
 function Login() {
   const navigate = useNavigate();
 
   const validationSchema = Yup.object({
-    email: Yup.string()
-      .email("Invalid email format")
-      .required("Email is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-  });
+  email: Yup.string()
+    .email("Invalid email format")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(8, "Password must be at least 8 characters") // ← was 6
+    .required("Password is required"),
+});
 
-  const handleSubmit = (values, { setSubmitting, resetForm }) => {
-    console.log("Login submitted:", values);
 
-    setTimeout(() => {
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          login: values.email,   // backend accepts email or phone via "login"
+          password: values.password,
+          device: "web",
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        // Try to surface backend validation or error message
+        const msg =
+          (data?.errors &&
+            (data.errors.login?.[0] ||
+             data.errors.password?.[0] ||
+             Object.values(data.errors)?.[0]?.[0])) ||
+          data?.message ||
+          `Login failed (HTTP ${res.status})`;
+        alert(msg);
+        return;
+      }
+
+      // Success shape: { ok:true, data:{ user, token } }
+      const token = data?.data?.token || data?.token;
+      const user  = data?.data?.user  || data?.user;
+
+      if (token) localStorage.setItem("auth_token", token);
+      if (user)  localStorage.setItem("auth_user", JSON.stringify(user));
+      if (user?.shop_id) localStorage.setItem("shop_id", String(user.shop_id));
+
       alert("Login successful!");
       resetForm();
       navigate("/dashboard");
+    } catch (err) {
+      alert(err?.message || "Network error while logging in");
+    } finally {
       setSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (

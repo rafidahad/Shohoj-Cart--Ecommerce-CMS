@@ -4,22 +4,23 @@ import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL ;
 
 function Signup() {
   const navigate = useNavigate();
 
   const validationSchema = Yup.object({
-    name: Yup.string()
-      .min(2, "Name must be at least 2 characters")
-      .required("Name is required"),
-    email: Yup.string()
-      .email("Invalid email format")
-      .required("Email is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters") // backend accepts 8+, but we'll keep your UI text
-      .required("Password is required"),
-  });
+  name: Yup.string()
+    .min(2, "Name must be at least 2 characters")
+    .required("Name is required"),
+  email: Yup.string()
+    .email("Invalid email format")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(8, "Password must be at least 8 characters") // ← was 6
+    .required("Password is required"),
+});
+
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
