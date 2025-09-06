@@ -2,8 +2,8 @@
 //import reactLogo from './assets/react.svg'
 //import viteLogo from '/vite.svg'
 import './App.css'
-import Login from './components/Login/Login'
-import Signup from './components/SignUp/Signup'
+import Login from './pages/Login/Login'
+import Signup from './pages/SignUp/Signup'
 import {Routes, Route, Navigate} from 'react-router-dom'
 
 function App() {
