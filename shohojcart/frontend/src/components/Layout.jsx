@@ -205,7 +205,7 @@ const Layout = ({ children }) => {
                       to="/"
                       className="hover:text-teal-400 dark:hover:text-teal-600 transition-colors duration-200"
                     >
-                      > Home
+                      // Home
                     </Link>
                   </li>
                   <li>
@@ -213,7 +213,7 @@ const Layout = ({ children }) => {
                       to="/find_buddy"
                       className="hover:text-teal-400 dark:hover:text-teal-600 transition-colors duration-200"
                     >
-                      > FindBuddy
+                      // FindBuddy
                     </Link>
                   </li>
                   <li>
@@ -221,7 +221,7 @@ const Layout = ({ children }) => {
                       to="/micro_project"
                       className="hover:text-teal-400 dark:hover:text-teal-600 transition-colors duration-200"
                     >
-                      > MicroProjects
+                      // MicroProjects
                     </Link>
                   </li>
                   <li>
@@ -229,7 +229,7 @@ const Layout = ({ children }) => {
                       to="/show_case"
                       className="hover:text-teal-400 dark:hover:text-teal-600 transition-colors duration-200"
                     >
-                      > Showcase
+                      // Showcase
                     </Link>
                   </li>
                 </ul>
@@ -244,7 +244,7 @@ const Layout = ({ children }) => {
                       href="#"
                       className="hover:text-teal-400 dark:hover:text-teal-600 transition-colors duration-200"
                     >
-                      > Docs
+                      // Docs
                     </a>
                   </li>
                   <li>
@@ -252,7 +252,7 @@ const Layout = ({ children }) => {
                       href="#"
                       className="hover:text-teal-400 dark:hover:text-teal-600 transition-colors duration-200"
                     >
-                      > API
+                      // API
                     </a>
                   </li>
                   <li>
@@ -260,7 +260,7 @@ const Layout = ({ children }) => {
                       href="#"
                       className="hover:text-teal-400 dark:hover:text-teal-600 transition-colors duration-200"
                     >
-                      > Support
+                      // Support
                     </a>
                   </li>
                 </ul>
@@ -275,7 +275,7 @@ const Layout = ({ children }) => {
                       href="#"
                       className="hover:text-teal-400 dark:hover:text-teal-600 transition-colors duration-200"
                     >
-                      > GitHub
+                      // GitHub
                     </a>
                   </li>
                   <li>
@@ -283,7 +283,7 @@ const Layout = ({ children }) => {
                       href="#"
                       className="hover:text-teal-400 dark:hover:text-teal-600 transition-colors duration-200"
                     >
-                      > Twitter
+                      // Twitter
                     </a>
                   </li>
                   <li>
@@ -291,7 +291,7 @@ const Layout = ({ children }) => {
                       href="#"
                       className="hover:text-teal-400 dark:hover:text-teal-600 transition-colors duration-200"
                     >
-                      > Discord
+                      // Discord
                     </a>
                   </li>
                 </ul>
