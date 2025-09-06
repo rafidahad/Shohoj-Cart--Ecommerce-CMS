@@ -4,30 +4,64 @@ import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL ;
+
 function Signup() {
   const navigate = useNavigate();
 
   const validationSchema = Yup.object({
-    name: Yup.string()
-      .min(2, "Name must be at least 2 characters")
-      .required("Name is required"),
-    email: Yup.string()
-      .email("Invalid email format")
-      .required("Email is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-  });
+  name: Yup.string()
+    .min(2, "Name must be at least 2 characters")
+    .required("Name is required"),
+  email: Yup.string()
+    .email("Invalid email format")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(8, "Password must be at least 8 characters") // ← was 6
+    .required("Password is required"),
+});
 
-  const handleSubmit = (values, { setSubmitting, resetForm }) => {
-    console.log("Signup submitted:", values);
 
-    setTimeout(() => {
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/register`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: values.name,
+          email: values.email,
+          password: values.password,
+          // phone is optional; add here if you later include it in the form
+          device: "web",
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        // Show first validation error or generic message
+        const firstError =
+          (data?.errors &&
+            Object.values(data.errors)[0] &&
+            Object.values(data.errors)[0][0]) ||
+          data?.message ||
+          `Registration failed (HTTP ${res.status})`;
+        alert(firstError);
+        return;
+      }
+
+      // Success -> backend returns { ok: true, data: { user, token } }
       alert("Signup successful!");
       resetForm();
-      navigate("/login"); // redirect to login after signup
+      navigate("/login");
+    } catch (err) {
+      alert(err?.message || "Network error while signing up");
+    } finally {
       setSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (
