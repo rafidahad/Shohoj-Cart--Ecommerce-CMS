@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use App\Exceptions\InactiveAccountException;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
@@ -64,7 +65,6 @@ class AuthController extends Controller
         $user = User::where('email', $login)->orWhere('phone', $login)->first();
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
-            // Let Handler turn this into 422 with field error shape
             throw ValidationException::withMessages(['login' => ['The provided credentials are incorrect.']]);
         }
 
@@ -82,7 +82,7 @@ class AuthController extends Controller
         $abilities = $this->abilitiesFor($user);
         $token     = $user->createToken($device, $abilities)->plainTextToken;
 
-        logger()->info('auth.login', ['user_id'=>$user->id, 'shop_id'=>$user->shop_id, 'ip'=>request()->ip()]);
+        logger()->info('auth.login', ['user_id'=>$user->id, 'shop_id'=>$user->shop_id, 'ip'=>$request->ip()]);
 
         return $this->ok([
             'user'  => new UserResource($user->load('roles')),
