@@ -118,7 +118,7 @@ Build a unified platform that streamlines **POS**, **Inventory/Warehouse**, **Or
 |------|------|
 | Mohammad Rafid Ahad | 20220204062 |
 | Mohammed Faiyaz Alam | 20220204066 |
-| Shinjon Das | 20220204056 |
+| Shinjan Das | 20220204056 |
 | Md. Ahsan Habib Hridoy | 20220204064 |
 
 ### License
