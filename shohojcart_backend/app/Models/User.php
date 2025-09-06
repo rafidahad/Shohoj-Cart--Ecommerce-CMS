@@ -21,7 +21,10 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = ['email_verified_at' => 'datetime'];
 
     // roles pivot (roles table + user_roles pivot exist in your schema)
-    public function roles() {
-        return $this->belongsToMany(Role::class, 'user_roles');
-    }
+public function roles()
+{
+    return $this->belongsToMany(\App\Models\Role::class, 'user_roles');
+}
+
+
 }

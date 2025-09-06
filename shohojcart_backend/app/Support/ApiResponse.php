@@ -2,19 +2,24 @@
 
 namespace App\Support;
 
+use Illuminate\Http\JsonResponse;
+
 trait ApiResponse
 {
-    protected function ok($data = [], int $code = 200)
-    { return response()->json(['ok' => true, 'data' => $data], $code); }
+    protected function ok($data = null, int $status = 200): JsonResponse
+    {
+        return response()->json(['ok' => true, 'data' => $data], $status);
+    }
 
-    protected function created($data = [], int $code = 201)
-    { return response()->json(['ok' => true, 'data' => $data], $code); }
+    protected function created($data = null): JsonResponse
+    {
+        return $this->ok($data, 201);
+    }
 
-    protected function fail(string $message, int $code = 400, $errors = null, $traceId = null)
+    protected function fail(string $message, int $status = 400, $errors = null): JsonResponse
     {
         $payload = ['ok' => false, 'message' => $message];
-        if ($errors)  $payload['errors'] = $errors;
-        if ($traceId) $payload['trace_id'] = $traceId;
-        return response()->json($payload, $code);
+        if ($errors) $payload['errors'] = $errors;
+        return response()->json($payload, $status);
     }
 }

@@ -117,8 +117,8 @@ Build a unified platform that streamlines **POS**, **Inventory/Warehouse**, **Or
 | Name | ID | WakaTime|
 |------|------|------|
 | Mohammad Rafid Ahad | 20220204062 | [![wakatime](https://wakatime.com/badge/user/3ae8b4f9-4e97-4b74-8699-cf3f6035ff0f/project/ae2b06b7-1ff8-443d-a8a6-690e86f79d41.svg)](https://wakatime.com/badge/user/3ae8b4f9-4e97-4b74-8699-cf3f6035ff0f/project/ae2b06b7-1ff8-443d-a8a6-690e86f79d41)
-| Mohammed Faiyaz Alam | 20220204066 | [![wakatime](https://wakatime.com/badge/user/41f37653-8fc2-4ae4-b4c5-d7c1f8df20d3/project/cbd2cf64-6468-4c4a-a8e8-cf970118d720.svg)](https://wakatime.com/badge/user/41f37653-8fc2-4ae4-b4c5-d7c1f8df20d3/project/cbd2cf64-6468-4c4a-a8e8-cf970118d720)
-| Shinjan Das | 20220204056 |
+| Mohammed Faiyaz Alam | 20220204066 | [![wakatime](https://wakatime.com/badge/user/41f37653-8fc2-4ae4-b4c5-d7c1f8df20d3/project/7993cc82-0ba7-4311-b839-3015ea805501.svg)](https://wakatime.com/badge/user/41f37653-8fc2-4ae4-b4c5-d7c1f8df20d3/project/7993cc82-0ba7-4311-b839-3015ea805501)
+| Shinjan Das | 20220204056 |[![wakatime](https://wakatime.com/badge/user/e8f8efee-7273-4bce-b17a-05fdfadf134e/project/204bb828-2df1-4766-981c-a9c16bb54a5a.svg)](https://wakatime.com/badge/user/e8f8efee-7273-4bce-b17a-05fdfadf134e/project/204bb828-2df1-4766-981c-a9c16bb54a5a)
 | Md. Ahsan Habib Hridoy | 20220204064 |[![wakatime](https://wakatime.com/badge/user/b786cc65-c1f3-436e-9bb2-a5e2652d8e87/project/39d04ccd-ecff-4336-a722-69ea9a4b0eb3.svg)](https://wakatime.com/badge/user/b786cc65-c1f3-436e-9bb2-a5e2652d8e87/project/39d04ccd-ecff-4336-a722-69ea9a4b0eb3)
 
 ### License
