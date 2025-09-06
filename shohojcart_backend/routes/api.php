@@ -1,11 +1,16 @@
 <?php
 
+
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\ProductController;
+
+Route::apiResource('products', ProductController::class);
 
 // Public auth
 Route::prefix('auth')->group(function () {
@@ -29,7 +34,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 // Protected auth
-Route::middleware(['auth:sanctum','shop'])->group(function () {
+Route::middleware(['auth:sanctum', 'shop'])->group(function () {
     Route::get('auth/me',          [AuthController::class, 'me']);
     Route::post('auth/logout',     [AuthController::class, 'logout']);
     Route::post('auth/logout-all', [AuthController::class, 'logoutAll']);
