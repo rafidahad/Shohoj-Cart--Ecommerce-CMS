@@ -1,28 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Signup.css";
 import { useNavigate } from "react-router-dom";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ;
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 function Signup() {
   const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validationSchema = Yup.object({
-  name: Yup.string()
-    .min(2, "Name must be at least 2 characters")
-    .required("Name is required"),
-  email: Yup.string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  password: Yup.string()
-    .min(8, "Password must be at least 8 characters") // ← was 6
-    .required("Password is required"),
-});
+  const validate = () => {
+    if (!name || name.length < 2) return "Name must be at least 2 characters";
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !re.test(email)) return "Valid email is required";
+    if (!password || password.length < 8) return "Password must be at least 8 characters";
+    return null;
+  };
 
-
-  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    const vErr = validate();
+    if (vErr) return setError(vErr);
+    setIsSubmitting(true);
     try {
       const res = await fetch(`${API_BASE}/auth/register`, {
         method: "POST",
@@ -31,36 +34,32 @@ function Signup() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: values.name,
-          email: values.email,
-          password: values.password,
-          // phone is optional; add here if you later include it in the form
+          name,
+          email,
+          password,
           device: "web",
         }),
       });
 
       const data = await res.json().catch(() => ({}));
-
+      console.log('Signup response', res.status, data);
       if (!res.ok) {
-        // Show first validation error or generic message
         const firstError =
-          (data?.errors &&
-            Object.values(data.errors)[0] &&
-            Object.values(data.errors)[0][0]) ||
+          (data?.errors && Object.values(data.errors)[0] && Object.values(data.errors)[0][0]) ||
           data?.message ||
           `Registration failed (HTTP ${res.status})`;
-        alert(firstError);
+        setError(firstError);
         return;
       }
 
-      // Success -> backend returns { ok: true, data: { user, token } }
       alert("Signup successful!");
-      resetForm();
+      setName(""); setEmail(""); setPassword("");
       navigate("/login");
     } catch (err) {
-      alert(err?.message || "Network error while signing up");
+      console.error('Signup failed', err);
+      setError(err?.message || "Network error while signing up");
     } finally {
-      setSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -70,61 +69,28 @@ function Signup() {
         <div className="logo">Shohoj Cart</div>
         <div className="sub-text">Create your account</div>
 
-        <Formik
-          initialValues={{ name: "", email: "", password: "" }}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({ isSubmitting }) => (
-            <Form>
-              <div className="form-group">
-                <Field
-                  type="text"
-                  name="name"
-                  placeholder="Full Name"
-                  className="form-input"
-                />
-                <ErrorMessage name="name" component="div" className="error" />
-              </div>
+        {error && <div className="error" style={{ marginBottom: 12 }}>{error}</div>}
 
-              <div className="form-group">
-                <Field
-                  type="email"
-                  name="email"
-                  placeholder="Email address"
-                  className="form-input"
-                />
-                <ErrorMessage name="email" component="div" className="error" />
-              </div>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Full Name" className="form-input" />
+          </div>
 
-              <div className="form-group">
-                <Field
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  className="form-input"
-                />
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className="error"
-                />
-              </div>
+          <div className="form-group">
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" className="form-input" />
+          </div>
 
-              <button
-                type="submit"
-                className="signup-btn"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Signing Up..." : "Sign Up"}
-              </button>
-            </Form>
-          )}
-        </Formik>
+          <div className="form-group">
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" className="form-input" />
+          </div>
+
+          <button type="submit" className="signup-btn" disabled={isSubmitting}>
+            {isSubmitting ? "Signing Up..." : "Sign Up"}
+          </button>
+        </form>
 
         <div className="login-text">
-          Already have an account?{" "}
-          <span onClick={() => navigate("/login")}>Login</span>
+          Already have an account? <span onClick={() => navigate("/login")}>Login</span>
         </div>
       </div>
     </div>
