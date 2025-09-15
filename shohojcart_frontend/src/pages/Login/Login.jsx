@@ -1,25 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ;
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 function Login() {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validationSchema = Yup.object({
-  email: Yup.string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  password: Yup.string()
-    .min(8, "Password must be at least 8 characters") // ← was 6
-    .required("Password is required"),
-});
-
-
-  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
     try {
       const res = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
@@ -27,43 +20,28 @@ function Login() {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          login: values.email,   // backend accepts email or phone via "login"
-          password: values.password,
-          device: "web",
-        }),
+        body: JSON.stringify({ login: email, password, device: "web" }),
       });
-
+      console.log('Login HTTP status:', res.status, res.statusText);
       const data = await res.json().catch(() => ({}));
-
+      console.log('Login response body:', data);
       if (!res.ok) {
-        // Try to surface backend validation or error message
-        const msg =
-          (data?.errors &&
-            (data.errors.login?.[0] ||
-             data.errors.password?.[0] ||
-             Object.values(data.errors)?.[0]?.[0])) ||
-          data?.message ||
-          `Login failed (HTTP ${res.status})`;
+        const msg = (data?.errors && (data.errors.login?.[0] || data.errors.password?.[0] || Object.values(data.errors)?.[0]?.[0])) || data?.message || `Login failed (HTTP ${res.status})`;
         alert(msg);
         return;
       }
-
-      // Success shape: { ok:true, data:{ user, token } }
       const token = data?.data?.token || data?.token;
       const user  = data?.data?.user  || data?.user;
-
       if (token) localStorage.setItem("auth_token", token);
       if (user)  localStorage.setItem("auth_user", JSON.stringify(user));
       if (user?.shop_id) localStorage.setItem("shop_id", String(user.shop_id));
-
       alert("Login successful!");
-      resetForm();
       navigate("/dashboard");
     } catch (err) {
+      console.error('Login request failed:', err);
       alert(err?.message || "Network error while logging in");
     } finally {
-      setSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -72,58 +50,23 @@ function Login() {
       <div className="login-card">
         <div className="logo">Shohoj Cart</div>
 
-        <Formik
-          initialValues={{ email: "", password: "" }}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({ isSubmitting }) => (
-            <Form>
-              <div className="form-group">
-                <Field
-                  type="email"
-                  name="email"
-                  placeholder="Email address"
-                  className="form-input"
-                />
-                <ErrorMessage name="email" component="div" className="error" />
-              </div>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" className="form-input" />
+          </div>
 
-              <div className="form-group">
-                <Field
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  className="form-input"
-                />
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className="error"
-                />
-              </div>
+          <div className="form-group">
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" className="form-input" />
+          </div>
 
-              <div className="forgot-password">
-                <span onClick={() => navigate("/forgot")}>
-                  Forgot password?
-                </span>
-              </div>
+          <div className="forgot-password">
+            <span onClick={() => navigate("/forgot")}>Forgot password?</span>
+          </div>
 
-              <button
-                type="submit"
-                className="login-btn"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Logging in..." : "Login"}
-              </button>
-            </Form>
-          )}
-        </Formik>
+          <button type="submit" className="login-btn" disabled={isSubmitting}>{isSubmitting ? "Logging in..." : "Login"}</button>
+        </form>
 
-        <div className="signup-text">
-          Don’t have an account?{" "}
-          <span onClick={() => navigate("/signup")}>Sign up</span>
-        </div>
+        <div className="signup-text">Don’t have an account? <span onClick={() => navigate("/signup")}>Sign up</span></div>
       </div>
     </div>
   );

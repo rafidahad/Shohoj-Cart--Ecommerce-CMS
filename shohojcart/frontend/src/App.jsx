@@ -1,23 +1,23 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/dashboard/ProtectedRoute";
 
 
-import Home from "./pages/Home";
-import Orders from "./pages/Orders";
-import Products from "./pages/Products";
-import Customers from "./pages/Customers";
-import Marketing from "./pages/Marketing";
-import Discounts from "./pages/Discounts";
-import Content from "./pages/Content";
-import Markets from "./pages/Markets";
-import Analytics from "./pages/Analytics";
-import OnlineStore from "./pages/OnlineStore";
-import Apps from "./pages/Apps";
-import Settings from "./pages/Settings";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import Home from "./pages/dashboard/Home";
+import Orders from "./pages/dashboard/Orders";
+import Products from "./pages/dashboard/Products";
+import Customers from "./pages/dashboard/Customers";
+import Marketing from "./pages/dashboard/Marketing";
+import Discounts from "./pages/dashboard/Discounts";
+import Content from "./pages/dashboard/Content";
+import Markets from "./pages/dashboard/Markets";
+import Analytics from "./pages/dashboard/Analytics";
+import OnlineStore from "./pages/dashboard/OnlineStore";
+import Apps from "./pages/dashboard/Apps";
+import Settings from "./pages/dashboard/Settings";
+import Login from "./pages/dashboard/Login";
+import Register from "./pages/dashboard/Register";
 
 function App() {
   return (
