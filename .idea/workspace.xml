@@ -5,26 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8008e438-4da9-47f4-9ebf-760d11dc78bc" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/shohojcart_frontend/src/components/Storefront/Header.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shohojcart_frontend/src/pages/CartPage/CartPage.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shohojcart_frontend/src/pages/CartPage/CartPage.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shohojcart_frontend/src/pages/CheckoutPage/CheckoutPage.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shohojcart_frontend/src/pages/CheckoutPage/CheckoutPage.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shohojcart_frontend/src/pages/HomePage/HomePage.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shohojcart_frontend/src/pages/HomePage/HomePage.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shohojcart_frontend/src/pages/ProductPage/ProductPage.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shohojcart_frontend/src/pages/ProductPage/ProductPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shohojcart_frontend/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/shohojcart_frontend/src/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shohojcart_frontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/shohojcart_frontend/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shohojcart_frontend/src/components/Storefront/Cart.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shohojcart_frontend/src/components/Storefront/Checkout.jsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/shohojcart_frontend/src/components/Storefront/Footer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/shohojcart_frontend/src/components/Storefront/Footer.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shohojcart_frontend/src/components/Storefront/Header.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/shohojcart_frontend/src/components/Storefront/Header.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shohojcart_frontend/src/components/Storefront/ProductCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/shohojcart_frontend/src/components/Storefront/ProductCard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shohojcart_frontend/src/components/Storefront/ProductList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/shohojcart_frontend/src/components/Storefront/ProductList.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shohojcart_frontend/src/components/Storefront/ProductPage.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shohojcart_frontend/src/components/Storefront/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/shohojcart_frontend/src/components/Storefront/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shohojcart_frontend/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/shohojcart_frontend/src/index.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,6 +75,7 @@
       <workItem from="1757959238112" duration="179000" />
       <workItem from="1757959670999" duration="170000" />
       <workItem from="1757959865528" duration="101000" />
+      <workItem from="1757959997688" duration="298000" />
     </task>
     <servers />
   </component>
