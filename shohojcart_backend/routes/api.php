@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ShopController;
 
 Route::apiResource('products', ProductController::class);
 
@@ -38,4 +39,6 @@ Route::middleware(['auth:sanctum', 'shop'])->group(function () {
     Route::get('auth/me',          [AuthController::class, 'me']);
     Route::post('auth/logout',     [AuthController::class, 'logout']);
     Route::post('auth/logout-all', [AuthController::class, 'logoutAll']);
+    Route::post('/shops', [ShopController::class, 'store']);                     // create shop (+ optional owner)
+    Route::post('/shops/{shop}/attach-owner', [ShopController::class, 'attachOwner']); 
 });

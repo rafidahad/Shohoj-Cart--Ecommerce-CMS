@@ -1,51 +1,70 @@
-import { SunIcon, MoonIcon } from "lucide-react";
-import { useTheme } from "../context/ThemeContext";
-import { useNavigate } from "react-router-dom";
-import Button from "./Button";
+import React from "react";
 
-function Header() {
-  const { theme, setTheme } = useTheme();
-  const navigate = useNavigate();
-
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
+/**
+ * Reusable top header for ShohojCart.
+ * Props:
+ * - user: { name, email } | null
+ * - onLogoClick: () => void
+ * - onLogout: () => void
+ */
+export default function Header({ user, onLogoClick, onLogout }) {
+  const initials = (name) =>
+    (name || "")
+      .split(" ")
+      .map((w) => w[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Logo */}
-        <a href="/" className="text-xl font-bold bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">
-          Hey Buddy
-        </a>
+    <header className="bg-gradient-to-r from-blue-600 to-cyan-400 shadow flex items-center px-4 sm:px-6 lg:px-8 py-3 justify-between">
+      {/* Brand / Logo */}
+      <button
+        type="button"
+        onClick={onLogoClick}
+        className="flex items-center gap-3 cursor-pointer"
+      >
+        <span className="inline-block h-9 w-9">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="10" fill="url(#paint0_linear)" />
+            <path d="M12 28V16a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H14a2 2 0 01-2-2z" fill="#fff" />
+            <path d="M16 18h8v8h-8z" fill="#38bdf8" />
+            <circle cx="20" cy="24" r="2" fill="#0ea5e9" />
+            <defs>
+              <linearGradient id="paint0_linear" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#38bdf8" />
+                <stop offset="1" stopColor="#0ea5e9" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </span>
+        <span className="font-extrabold text-xl sm:text-2xl text-white tracking-wide">
+          shohojcart
+        </span>
+      </button>
 
-        {/* Navigation */}
-        <nav className="flex items-center gap-6">
-          <a href="#features" className="text-sm font-medium hover:underline">Features</a>
-          <a href="#community" className="text-sm font-medium hover:underline">Community</a>
-
-          {/* Theme Toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-          >
-            {theme === "light" ? (
-              <MoonIcon className="h-5 w-5 text-gray-600" />
-            ) : (
-              <SunIcon className="h-5 w-5 text-yellow-400" />
-            )}
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-
-          {/* Green "Get Started" Button */}
-          <Button className="bg-green-500 hover:bg-green-600 text-white" onClick={() => navigate("/login")}> 
-            Get Started 
-          </Button>
-        </nav>
+      {/* Right side */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        {user ? (
+          <>
+            <div className="hidden sm:block text-white text-right leading-tight">
+              <div className="font-semibold truncate max-w-[200px]">{user?.name}</div>
+              <div className="text-white/80 text-xs truncate max-w-[200px]">{user?.email}</div>
+            </div>
+            <div className="bg-gradient-to-r from-green-400 to-lime-400 text-white px-3 py-1 rounded-full font-bold shadow">
+              {initials(user?.name)}
+            </div>
+            <button
+              onClick={onLogout}
+              className="ml-1 sm:ml-2 bg-white/15 hover:bg-white/25 text-white px-3 py-1 rounded-lg text-sm"
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <div className="text-white/90 text-sm">Not signed in</div>
+        )}
       </div>
     </header>
   );
 }
-
-export default Header;

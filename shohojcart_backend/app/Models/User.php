@@ -25,6 +25,10 @@ public function roles()
 {
     return $this->belongsToMany(\App\Models\Role::class, 'user_roles');
 }
+public function shop()
+    {
+        return $this->belongsTo(\App\Models\Shop::class);
+    }
 
 
 }
