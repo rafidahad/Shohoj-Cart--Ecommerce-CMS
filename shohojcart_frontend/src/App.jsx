@@ -21,26 +21,26 @@ import Marketing from "./pages/StoreManager/Marketing";
 import Discounts from "./pages/StoreManager/Discounts";
 import Content from "./pages/StoreManager/Content";
 import Markets from "./pages/StoreManager/Markets";
-
+import Protected from "./components/Protected";
 function App() {
   //  const [count, setCount] = useState(0)
 
   return (
     <Routes>
       {/* Storefront pages */}
-      <Route path="/" element={<Home />} />
-      <Route path="/dashboard" element={<Home />} />
-      <Route path="/orders" element={<Orders />} />
-      <Route path="/products" element={<Products />} />
-      <Route path="/customers" element={<Customers />} />
-      <Route path="/marketing" element={<Marketing />} />
-      <Route path="/discounts" element={<Discounts />} />
-      <Route path="/content" element={<Content />} />
-      <Route path="/markets" element={<Markets />} />
-      <Route path="/product/:id" element={<ProductPage />} />
-      <Route path="/cart" element={<Cart />} />
-      <Route path="/checkout" element={<Checkout />} />
-      <Route path="/Signup" element={<Signup />} />
+      <Route path="/" element={<Protected><Home /></Protected>} />
+      <Route path="/dashboard" element={<Protected><Home /></Protected>} />
+      <Route path="/orders" element={<Protected><Orders /></Protected>} />
+      <Route path="/products" element={<Protected><Products /></Protected>} />
+      <Route path="/customers" element={<Protected><Customers /></Protected>} />
+      <Route path="/marketing" element={<Protected><Marketing /></Protected>} />
+      <Route path="/discounts" element={<Protected><Discounts /></Protected>} />
+      <Route path="/content" element={<Protected><Content /></Protected>} />
+      <Route path="/markets" element={<Protected><Markets /></Protected>} />
+      <Route path="/product/:id" element={<Protected><ProductPage /></Protected>} />
+      <Route path="/cart" element={<Protected><Cart /></Protected>} />
+      <Route path="/checkout" element={<Protected><Checkout /></Protected>} />
+      <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
     </Routes>

@@ -21,47 +21,33 @@ function Signup() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    const vErr = validate();
-    if (vErr) return setError(vErr);
-    setIsSubmitting(true);
-    try {
-      const res = await fetch(`${API_BASE}/auth/register`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-          device: "web",
-        }),
-      });
-
-      const data = await res.json().catch(() => ({}));
-      console.log('Signup response', res.status, data);
-      if (!res.ok) {
-        const firstError =
-          (data?.errors && Object.values(data.errors)[0] && Object.values(data.errors)[0][0]) ||
-          data?.message ||
-          `Registration failed (HTTP ${res.status})`;
-        setError(firstError);
-        return;
-      }
-
-      alert("Signup successful!");
-      setName(""); setEmail(""); setPassword("");
-      navigate("/login");
-    } catch (err) {
-      console.error('Signup failed', err);
-      setError(err?.message || "Network error while signing up");
-    } finally {
-      setIsSubmitting(false);
+  e.preventDefault();
+  setError("");
+  const vErr = validate();
+  if (vErr) return setError(vErr);
+  setIsSubmitting(true);
+  try {
+    const res = await fetch(`${API_BASE}/auth/register`, {
+      method: "POST",
+      headers: { Accept: "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password, device: "web" }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const firstError =
+        (data?.errors && Object.values(data.errors)?.[0]?.[0]) ||
+        data?.message || `Registration failed (HTTP ${res.status})`;
+      setError(firstError);
+      return;
     }
-  };
+    setName(""); setEmail(""); setPassword("");
+    navigate("/login");
+  } catch (err) {
+    setError(err?.message || "Network error while signing up");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="shohojcart-signup">
