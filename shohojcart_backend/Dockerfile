@@ -1,112 +1,41 @@
-# ---- Stage 1: Composer deps (DEV) ----# ---- Stage 1: Composer deps (DEV) ----# ---- Stage 1: Composer# Ensure caches aren't baked (prevents stale config loading dev providers incorrectly)
-
+# ---------- Stage 1: Composer deps ----------
 FROM composer:2 AS vendor
-
-WORKDIR /appFROM composer:2 AS vendorRUN rm -f bootstrap/cache/config.php bootstrap/cache/packages.php \
-
+WORKDIR /app
 COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-interaction --prefer-dist --no-progress
 
-RUN composer install --no-interaction --prefer-dist --no-progress --no-scriptsWORKDIR /app && mkdir -p storage/app/public storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
-
-
-
-# ---- Stage 2: PHP runtime (artisan serve, no Nginx/MySQL inside) ----COPY composer.json composer.lock ./ && chown -R www-data:www-data storage bootstrap/cache \
-
+# ---------- Stage 2: PHP Runtime ----------
 FROM php:8.2-cli-alpine
 
-# Dev install (includes Collision etc.). Remove --no-scripts if your packages need scripts. && chmod -R 775 storage bootstrap/cache
+# System deps for common Laravel extensions
+RUN apk add --no-cache \
+  bash git curl icu-dev oniguruma-dev libzip-dev zlib-dev libpng-dev \
+  libjpeg-turbo-dev freetype-dev
 
-# System libs for PHP extensions
+# PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+ && docker-php-ext-install -j$(nproc) pdo_mysql bcmath intl zip mbstring gd opcache
 
-RUN apk add --no-cache bash git curl zip unzip icu-dev oniguruma-dev libzip-dev \RUN composer install --no-interaction --prefer-dist --no-progress --no-scripts
-
-    libpng-dev libjpeg-turbo-dev freetype-dev
-
-# Default port for local run (Render will inject $PORT)
-
-# PHP extensions used by the app
-
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \# ---- Stage 2: PHP runtime (artisan serve, no Nginx/MySQL inside) ----EXPOSE 8080
-
- && docker-php-ext-install -j"$(nproc)" pdo_mysql bcmath intl zip mbstring gd
-
-FROM php:8.2-cli-alpine
+# Opcache tuning (for prod)
+COPY .docker/php.ini /usr/local/etc/php/conf.d/zz-custom.ini
 
 WORKDIR /var/www/html
 
-# Clear caches on boot, run migrations, and start the dev server
-
-# Copy app and vendor from build stage
-
-COPY . .# System libs for PHP extensionsCMD sh -lc "php artisan config:clear && php artisan cache:clear && php artisan migrate --force && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}" ----
-
+# App code + vendor from build stage
+COPY . .
 COPY --from=vendor /app/vendor ./vendor
+# Ensure storage writable as before (still root here)
+RUN addgroup -g 1000 laravel && adduser -G laravel -g laravel -D -u 1000 laravel \
+ && chown -R laravel:laravel storage bootstrap/cache
 
-RUN apk add --no-cache bash git curl zip unzip icu-dev oniguruma-dev libzip-dev \FROM composer:2 AS vendor
+# ✅ Copy entrypoint with permissions and ownership in one step
+COPY --chown=laravel:laravel --chmod=0755 .docker/entrypoint.sh /entrypoint.sh
 
-# Create directories and set permissions
+# (Windows fix) normalize line endings to LF to avoid ^M errors
+RUN sed -i 's/\r$//' /entrypoint.sh
 
-RUN rm -f bootstrap/cache/config.php bootstrap/cache/packages.php \    libpng-dev libjpeg-turbo-dev freetype-devWORKDIR /app
+# Switch to non-root only AFTER the file is in place
+USER laravel
 
- && mkdir -p storage/app/public storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
-
- && chown -R www-data:www-data storage bootstrap/cache \COPY composer.json composer.lock ./
-
- && chmod -R 775 storage bootstrap/cache
-
-# PHP extensions used by the app# Dev install (includes Collision etc.). Remove --no-scripts if your packages need scripts.
-
-# Default port for local run
-
-EXPOSE 8080RUN docker-php-ext-configure gd --with-freetype --with-jpeg \RUN composer install --no-interaction --prefer-dist --no-progress --no-scripts
-
-
-
-# Clear caches on boot, run migrations, and start the dev server && docker-php-ext-install -j"$(nproc)" pdo_mysql bcmath intl zip mbstring gd
-
-CMD sh -lc "php artisan config:clear && php artisan cache:clear && php artisan migrate --force && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
-# ---- Stage 2: PHP runtime (artisan serve, no Nginx/MySQL inside) ----
-
-WORKDIR /var/www/htmlFROM php:8.2-cli-alpine
-
-
-
-# Copy app and vendor from build stage# System libs for PHP extensions
-
-COPY . .RUN apk add --no-cache bash git curl zip unzip icu-dev oniguruma-dev libzip-dev \
-
-COPY --from=vendor /app/vendor ./vendor    libpng-dev libjpeg-turbo-dev freetype-dev
-
-
-
-# Ensure caches aren't baked (prevents stale config loading dev providers incorrectly)# PHP extensions used by the app
-
-RUN rm -f bootstrap/cache/config.php bootstrap/cache/packages.php \RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-
- && mkdir -p storage/app/public storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \ && docker-php-ext-install -j"$(nproc)" pdo_mysql bcmath intl zip mbstring gd
-
- && chown -R www-data:www-data storage bootstrap/cache \
-
- && chmod -R 775 storage bootstrap/cacheWORKDIR /var/www/html
-
-
-
-# Default port for local run (Render will inject $PORT)# Copy app and vendor from build stage
-
-EXPOSE 8080COPY . .
-
-COPY --from=vendor /app/vendor ./vendor
-
-# Clear caches on boot, run migrations, and start the dev server
-
-CMD sh -lc "php artisan config:clear && php artisan cache:clear && php artisan migrate --force && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"# Ensure caches aren’t baked (prevents stale config loading dev providers incorrectly)
-RUN rm -f bootstrap/cache/config.php bootstrap/cache/packages.php \
- && mkdir -p storage bootstrap/cache \
- && chown -R www-data:www-data storage bootstrap/cache \
- && chmod -R 775 storage bootstrap/cache
-
-# Default port for local run (Render will inject $PORT)
-EXPOSE 8080
-
-# Clear caches on boot (safe in dev), then run the dev server on $PORT
-CMD sh -lc "php artisan config:clear || true && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
+EXPOSE 8000
+CMD ["/entrypoint.sh"]
