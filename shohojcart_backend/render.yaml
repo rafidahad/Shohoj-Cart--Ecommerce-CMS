@@ -11,7 +11,7 @@ services:
       - key: APP_DEBUG
         value: false
       - key: APP_URL
-        value: https://shohojcart-backend.onrender.com
+        value: https://api-shohojcart.onrender.com
       - key: RUN_MIGRATIONS
         value: "false"  # use a separate job/hook for migrations
       # ---- DB (remote) ----
