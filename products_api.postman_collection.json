@@ -1,0 +1,121 @@
+{
+  "info": {
+    "name": "Ecommerce Product API Auto CRUD",
+    "_postman_id": "auto-crud-001",
+    "description": "Fully fixed Postman collection to run all Product CRUD requests sequentially",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Product",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"shop_id\": 1,\n  \"name\": \"Sample Product\",\n  \"slug\": \"sample-product\",\n  \"sku\": \"SKU123\",\n  \"status\": \"draft\",\n  \"sell_price\": 99.99,\n  \"sourcing_cost\": 45.50,\n  \"stock_policy\": \"manual\",\n  \"description\": \"This is a sample product for testing.\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/products", "host": ["{{base_url}}"], "path": ["products"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function() { pm.response.to.have.status(201); });",
+              "let jsonData = pm.response.json();",
+              "pm.expect(jsonData).to.have.property('id');",
+              "pm.environment.set('product_id', jsonData.id);",
+              "console.log('✅ product_id set to', jsonData.id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get All Products",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/products", "host": ["{{base_url}}"], "path": ["products"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() { pm.response.to.have.status(200); });",
+              "pm.test('Response is an array', function() { pm.expect(pm.response.json()).to.be.an('array'); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Single Product",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/products/{{product_id}}", "host": ["{{base_url}}"], "path": ["products","{{product_id}}"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() { pm.response.to.have.status(200); });",
+              "pm.test('Product has a name', function() { pm.expect(pm.response.json()).to.have.property('name'); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Product",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Updated Product\",\n  \"slug\": \"updated-product\",\n  \"status\": \"published\",\n  \"sell_price\": 120.00,\n  \"sourcing_cost\": 60.00,\n  \"stock_policy\": \"manual\",\n  \"description\": \"Updated description for product.\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/products/{{product_id}}", "host": ["{{base_url}}"], "path": ["products","{{product_id}}"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() { pm.response.to.have.status(200); });",
+              "pm.test('Product name updated', function() { pm.expect(pm.response.json().name).to.eql('Updated Product'); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete Product",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": { "raw": "{{base_url}}/products/{{product_id}}", "host": ["{{base_url}}"], "path": ["products","{{product_id}}"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() { pm.response.to.have.status(200); });",
+              "pm.test('Delete confirmation message', function() { pm.expect(pm.response.json().message).to.eql('Product deleted successfully'); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: shohojcart-backend
+    env: docker
+    plan: free
+    healthCheckPath: / # adjust if you have a health route
+    autoDeploy: true
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://shohojcart-backend.onrender.com
+      - key: RUN_MIGRATIONS
+        value: "false"  # use a separate job/hook for migrations
+      # ---- DB (remote) ----
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: your.remote.db.host
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      # ---- Sanctum / Cookies for local Vite frontend ----
+      - key: SESSION_DRIVER
+        value: cookie
+      - key: SESSION_SECURE_COOKIE
+        value: "true"
+      - key: SANCTUM_STATEFUL_DOMAINS
+        value: localhost:5173
+      - key: SESSION_DOMAIN
+        value: .onrender.com
