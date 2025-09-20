@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
+# 🔥 Remove any cached config/packages/services committed in source
+rm -f bootstrap/cache/*.php || true
+
+# Normalize line endings if built on Windows
+[ -f /entrypoint.sh ] && sed -i 's/\r$//' /entrypoint.sh || true
+
 # Use app .env if present; Render will inject env vars anyway
 if [ ! -f .env ] && [ -f .env.example ]; then
   cp .env.example .env
@@ -12,7 +18,7 @@ if ! grep -q '^APP_KEY=' .env 2>/dev/null || [ -z "$(grep '^APP_KEY=' .env | cut
   php artisan key:generate --force || true
 fi
 
-# Cache config/routes/views (won't break if some are missing)
+# Clear caches (safe if nothing cached)
 php artisan config:clear || true
 php artisan route:clear || true
 php artisan view:clear || true
