@@ -19,7 +19,7 @@ async function handle(res) {
   let json = null;
   try {
     json = await res.json();
-  } catch (e) {
+  } catch {
     /* no json */
   }
   if (!res.ok) {
