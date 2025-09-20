@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\ShippingController;
 
 Route::apiResource('products', ProductController::class);
 
@@ -40,5 +41,11 @@ Route::middleware(['auth:sanctum', 'shop'])->group(function () {
     Route::post('auth/logout',     [AuthController::class, 'logout']);
     Route::post('auth/logout-all', [AuthController::class, 'logoutAll']);
     Route::post('/shops', [ShopController::class, 'store']);                     // create shop (+ optional owner)
-    Route::post('/shops/{shop}/attach-owner', [ShopController::class, 'attachOwner']); 
+    Route::post('/shops/{shop}/attach-owner', [ShopController::class, 'attachOwner']);
+});
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    // Shipping endpoints
+    Route::post('/shipping/calculate', [ShippingController::class, 'calculateCost']);
+    Route::post('/shipping/book', [ShippingController::class, 'bookShipment']);
 });

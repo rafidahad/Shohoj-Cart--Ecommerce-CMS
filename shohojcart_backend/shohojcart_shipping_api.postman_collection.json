@@ -1,0 +1,80 @@
+{
+  "info": {
+    "name": "Shohojcart Shipping API",
+    "_postman_id": "steadfast-shipping-collection",
+    "description": "Postman collection for testing Steadfast Courier integration",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Calculate Shipping Cost",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer YOUR_SANCTUM_TOKEN"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"weight\": 2.5,\n  \"destination\": \"Dhaka\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/shipping/calculate",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipping",
+            "calculate"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Book Shipment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer YOUR_SANCTUM_TOKEN"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"order_id\": 1,\n  \"recipient_name\": \"John Doe\",\n  \"recipient_phone\": \"01700000000\",\n  \"recipient_address\": \"House #1, Road #2, Dhaka\",\n  \"weight\": 2.5\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/shipping/book",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipping",
+            "book"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    }
+  ]
+}
