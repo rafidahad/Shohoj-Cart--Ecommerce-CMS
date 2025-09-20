@@ -9,7 +9,10 @@ class Shop extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name','slug','location','owner_name','details','active',
-    ];
+    protected $fillable = ['name','slug','location','owner_name','details','active'];
+
+    public function users()
+    {
+        return $this->hasMany(\App\Models\User::class);
+    }
 }
