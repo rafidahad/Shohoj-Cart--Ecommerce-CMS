@@ -9,38 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            //
+            $table->string('shipping_tracking_id')->nullable()->after('id');
+            $table->string('shipping_status')->nullable()->after('shipping_tracking_id');
         });
     }
 
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+    public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            //
+            $table->dropColumn(['shipping_tracking_id', 'shipping_status']);
         });
     }
 };
-
-
-/*
-public function up()
-{
-    Schema::table('orders', function (Blueprint $table) {
-        $table->string('shipping_tracking_id')->nullable()->after('id');
-        $table->string('shipping_status')->nullable()->after('shipping_tracking_id');
-    });
-}
-
-public function down()
-{
-    Schema::table('orders', function (Blueprint $table) {
-        $table->dropColumn(['shipping_tracking_id', 'shipping_status']);
-    });
-}
-*/
