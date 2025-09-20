@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ShippingOptions from "../components/ShippingOptions";
+import ShippingOptions from "../components/shipping/shippingoptions";
 import { bookShipment } from "../api/shipping";
 import axios from "axios";
 
