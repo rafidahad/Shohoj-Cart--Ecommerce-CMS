@@ -13,12 +13,12 @@ services:
       - key: APP_URL
         value: https://api-shohojcart.onrender.com
       - key: RUN_MIGRATIONS
-        value: "false"  # use a separate job/hook for migrations
+        value: "true"  # use a separate job/hook for migrations
       # ---- DB (remote) ----
       - key: DB_CONNECTION
         value: mysql
       - key: DB_HOST
-        value: 46.4.222.212
+        value: "46.4.222.212"
       - key: DB_PORT
         value: "3306"
       - key: DB_DATABASE
