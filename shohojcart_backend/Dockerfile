@@ -24,17 +24,15 @@ WORKDIR /var/www/html
 # App code + vendor from build stage
 COPY . .
 COPY --from=vendor /app/vendor ./vendor
+
 # Ensure storage writable as before (still root here)
 RUN addgroup -g 1000 laravel && adduser -G laravel -g laravel -D -u 1000 laravel \
  && chown -R laravel:laravel storage bootstrap/cache
 
-# ✅ Copy entrypoint with permissions and ownership in one step
+# ✅ Copy entrypoint with correct permissions and ownership
 COPY --chown=laravel:laravel --chmod=0755 .docker/entrypoint.sh /entrypoint.sh
 
-# (Windows fix) normalize line endings to LF to avoid ^M errors
-RUN sed -i 's/\r$//' /entrypoint.sh
-
-# Switch to non-root only AFTER the file is in place
+# Switch to non-root only AFTER entrypoint is copied
 USER laravel
 
 EXPOSE 8000
