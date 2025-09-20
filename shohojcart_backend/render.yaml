@@ -18,15 +18,15 @@ services:
       - key: DB_CONNECTION
         value: mysql
       - key: DB_HOST
-        value: your.remote.db.host
+        value: 46.4.222.212
       - key: DB_PORT
         value: "3306"
       - key: DB_DATABASE
-        sync: false
+        value: abstract_shohojcart
       - key: DB_USERNAME
-        sync: false
+        value: abstract_shohojcart
       - key: DB_PASSWORD
-        sync: false
+        value: abstract_shohojcart
       # ---- Sanctum / Cookies for local Vite frontend ----
       - key: SESSION_DRIVER
         value: cookie
