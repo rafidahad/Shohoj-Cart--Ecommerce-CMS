@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { calculateShipping } from "../api/shipping";
+import { calculateShipping } from "../../api/shipping";
 
 const ShippingOptions = ({ weight, destination, onSelect }) => {
   const [loading, setLoading] = useState(false);
