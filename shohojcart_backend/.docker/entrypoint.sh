@@ -23,7 +23,7 @@ php artisan config:clear || true
 php artisan route:clear || true
 php artisan view:clear || true
 
-Optional: run migrations automatically if DB is reachable
+#Optional: run migrations automatically if DB is reachable
 if [ "${RUN_MIGRATIONS:-false}" = "true" ]; then
   echo "Running migrations..."
   php artisan migrate --force || true
