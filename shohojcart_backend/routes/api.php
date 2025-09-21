@@ -8,22 +8,32 @@ use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\AiController;
 
-// -------- Public, non-auth endpoints --------
+/*
+|--------------------------------------------------------------------------
+| Public, read-only endpoints
+|--------------------------------------------------------------------------
+*/
 
-// If you want products to be public, keep this outside auth; otherwise move it under auth+sanc.
-Route::apiResource('products', ProductController::class)->only(['index','show']);
+// Products (public read)
+Route::get('products', [ProductController::class, 'index']);
+Route::get('products/{product}', [ProductController::class, 'show']);
 
-// Public shop read endpoints (MUST be top-level, not under /auth)
-// Public read endpoints
+// Shops (public read)
 Route::get('shops/slug/{slug}', [ShopController::class, 'showBySlug']);
 Route::get('shops/{shop}',       [ShopController::class, 'show']);
 
-// (optional) public browsing
-Route::get('shops/{shop}/products', [ProductController::class, 'byShop']);
-Route::get('shops/{shop}/products/{product:slug}', [ProductController::class, 'showByShopAndSlug']);
+// Shop browsing (public read)
+Route::get('shops/{shop}/products',                        [ProductController::class, 'byShop']);
+Route::get('shops/{shop}/products/{product:slug}',         [ProductController::class, 'showByShopAndSlug']);
 
-// -------- Public auth --------
+/*
+|--------------------------------------------------------------------------
+| Public auth
+|--------------------------------------------------------------------------
+*/
+
 Route::prefix('auth')->group(function () {
     Route::post('register',        [AuthController::class, 'register']);
     Route::post('login',           [AuthController::class, 'login'])->middleware('throttle:login');
@@ -31,29 +41,41 @@ Route::prefix('auth')->group(function () {
     Route::post('reset-password',  [PasswordController::class, 'reset']);
 });
 
-// -------- Email verification (authenticated) --------
+/*
+|--------------------------------------------------------------------------
+| Authenticated routes (Sanctum)
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/email/verification-notification', EmailVerificationNotificationController::class)
-        ->middleware('throttle:6,1')->name('verification.send');
-
-    Route::get('/email/verify-prompt', EmailVerificationPromptController::class)
-        ->name('verification.notice');
-
-    Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)
-        ->middleware(['signed'])
-        ->name('verification.verify');
-});
-
-// -------- Protected auth (do NOT require 'shop' for /auth/me) --------
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('auth/me',          [AuthController::class, 'me']);        // no 'shop' middleware here
+    // Auth user ops
+    Route::get('auth/me',          [AuthController::class, 'me']);
     Route::post('auth/logout',     [AuthController::class, 'logout']);
     Route::post('auth/logout-all', [AuthController::class, 'logoutAll']);
-});
 
-// -------- Shop-scoped protected actions --------
-Route::middleware(['auth:sanctum', 'shop'])->group(function () {
-    Route::post('shops', [ShopController::class, 'store']);               // create shop
+    // AI
+    Route::post('ai/product-description', [AiController::class, 'productDescription']);
+
+    // Shop create (must NOT require 'shop' middleware; user may not have a shop yet)
+    Route::post('shops', [ShopController::class, 'store']);
+
+    // Attach owner to an existing shop (optionally protect with your 'shop' middleware if it enforces ownership)
     Route::post('shops/{shop}/attach-owner', [ShopController::class, 'attachOwner']);
-    // Put any write routes here (create/update products, etc.)
+
+    // Product write operations (now POST is allowed)
+    Route::post('products',                 [ProductController::class, 'store']);
+    Route::put('products/{product}',        [ProductController::class, 'update']);
+    Route::delete('products/{product}',     [ProductController::class, 'destroy']);
+
+    // Email verification helpers
+    Route::post('email/verification-notification', EmailVerificationNotificationController::class)
+        ->middleware('throttle:6,1')
+        ->name('verification.send');
+
+    Route::get('email/verify-prompt', EmailVerificationPromptController::class)
+        ->name('verification.notice');
+
+    Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
+        ->middleware(['signed'])
+        ->name('verification.verify');
 });

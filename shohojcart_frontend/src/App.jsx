@@ -21,6 +21,7 @@ import Analytics from "./pages/dashboard/Analytics";
 import OnlineStore from "./pages/dashboard/OnlineStore";
 import Apps from "./pages/dashboard/Apps";
 import Settings from "./pages/dashboard/Settings";
+import ProductNew from "./pages/dashboard/ProductNew.jsx";
 
 // Storefront (public)
 import ShopHome from "./components/Storefront/ShopHome.jsx";
@@ -58,6 +59,7 @@ export default function App() {
         <Route path="onlinestore" element={<OnlineStore />} />
         <Route path="apps" element={<Apps />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="products/new" element={<ProductNew />} />
       </Route>
 
       {/* Auth */}
