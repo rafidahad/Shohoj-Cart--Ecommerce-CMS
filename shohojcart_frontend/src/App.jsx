@@ -19,16 +19,27 @@ import Analytics from "./pages/dashboard/Analytics";
 import OnlineStore from "./pages/dashboard/OnlineStore";
 import Apps from "./pages/dashboard/Apps";
 import Settings from "./pages/dashboard/Settings";
-
+import ShopHome from "./components/Storefront/ShopHome.jsx";
+import ShopProduct from "./components/Storefront/ShopProduct.jsx";
 function App() {
-  //  const [count, setCount] = useState(0)
+  //  const [count, setCount] = useState(0)  import ShopHome from "./components/Storefront/ShopHome.js";
 
   return (
     <Routes>
+
+            <Route path="/s/:shopSlug" element={<ShopHome />} />
+      <Route path="/s/:shopSlug/product/:productSlug" element={<ShopProduct />} />
       {/* Protected Dashboard pages */}
-      <Route path="/" element={<Protected><Layout /></Protected>}>
+       <Route
+        path="/d/:shopSlug"
+        element={
+          <Protected>
+            <Layout />
+          </Protected>
+        }
+      >
         <Route index element={<Home />} />
-        <Route path="dashboard" element={<Home />} />
+        <Route path="/d/:shopSlug" element={<Home />} />
         <Route path="orders" element={<Orders />} />
         <Route path="products" element={<Products />} />
         <Route path="customers" element={<Customers />} />

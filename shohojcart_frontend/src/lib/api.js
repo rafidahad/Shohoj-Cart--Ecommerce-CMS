@@ -15,24 +15,20 @@ function authHeaders() {
   return headers;
 }
 
+// src/lib/api.js
 async function handle(res) {
-  let json = null;
-  try {
-    json = await res.json();
-  } catch (e) {
-    /* no json */
-  }
+  let body;
+  try { body = await res.json(); } catch { body = null; }
+
   if (!res.ok) {
-    const message =
-      (json && (json.message || json.error)) || `HTTP ${res.status}`;
-    const errors = json && json.errors ? json.errors : undefined;
-    const err = new Error(message);
-    err.status = res.status;
-    err.errors = errors;
+    const err = new Error(body?.message || body?.error || `HTTP ${res.status}`);
+    err.status = res.status;     // 👈 keep status
+    err.payload = body;
     throw err;
   }
-  return json;
+  return body ?? {};
 }
+
 
 export const api = {
   post: async (path, body) => {

@@ -5,7 +5,7 @@ import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
-
+import { ShopProvider } from "./context/ShopContext.jsx";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
@@ -13,7 +13,9 @@ root.render(
     <BrowserRouter>
       <AuthProvider>
         <ThemeProvider>
-          <App />
+          <ShopProvider>
+            <App />
+          </ShopProvider>
         </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>
