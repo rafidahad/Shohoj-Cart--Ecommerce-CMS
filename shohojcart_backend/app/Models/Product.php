@@ -1,29 +1,24 @@
 <?php
-
+// app/Models/Product.php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    use HasFactory;
+    // If your table is not "products", set the table name:
+    // protected $table = 'products';
 
+    // Add/adjust fields based on your schema
     protected $fillable = [
-        'shop_id',
-        'name',
-        'slug',
-        'sku',
+        'shop_id', 'name', 'slug',
+        'price',      // <- keep generic price
+        'sell_price', // <- optional; ok if null / missing in DB
         'status',
-        'sell_price',
-        'sourcing_cost',
-        'stock_policy',
         'description',
-    ];
-
-    protected $casts = [
-        'sell_price'    => 'decimal:2',
-        'sourcing_cost' => 'decimal:2',
+        'sku',
+        'stock',
+        'image',
     ];
 
     public function shop()

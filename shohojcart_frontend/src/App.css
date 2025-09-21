@@ -1,0 +1,26 @@
+/* Reset default browser styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* সব element এর margin/padding reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Global background enforce */
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  background-color: white !important; /* force white */
+  color: #111;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Root container flex centering (optional) */
+#root {
+  display: flex;
+  flex-direction: column;
+}

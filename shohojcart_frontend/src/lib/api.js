@@ -1,59 +1,87 @@
 // src/lib/api.js
-const BASE_URL =
-  import.meta.env.VITE_API_BASE_URL;
+const RAW_BASE =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+const BASE_URL = RAW_BASE.replace(/\/+$/, ""); // strip trailing slashes
+
+function url(path) {
+  // Accept absolute URLs (e.g., Laravel paginator next_page_url) or join with BASE_URL
+  if (/^https?:\/\//i.test(path)) return path;
+  return `${BASE_URL}/${String(path).replace(/^\/+/, "")}`;
+}
 
 function authHeaders() {
   const token = localStorage.getItem("auth_token");
-  const headers = {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  };
-  if (token) headers.Authorization = `Bearer ${token}`;
   const shopId =
     localStorage.getItem("shop_id") || import.meta.env.VITE_DEFAULT_SHOP_ID;
+
+  const headers = {
+    Accept: "application/json",
+    "X-Requested-With": "XMLHttpRequest", // safe for Laravel
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
   if (shopId) headers["X-Shop-Id"] = String(shopId);
   return headers;
 }
 
 async function handle(res) {
-  let json = null;
+  let body = null;
   try {
-    json = await res.json();
-  } catch (e) {
-    /* no json */
-  }
+    body = await res.json();
+  } catch {}
+
   if (!res.ok) {
-    const message =
-      (json && (json.message || json.error)) || `HTTP ${res.status}`;
-    const errors = json && json.errors ? json.errors : undefined;
-    const err = new Error(message);
+    // pull first validation error if present
+    const firstFieldErr = body?.errors && Object.values(body.errors)?.[0]?.[0];
+    const msg =
+      firstFieldErr || body?.message || body?.error || `HTTP ${res.status}`;
+    const err = new Error(msg);
     err.status = res.status;
-    err.errors = errors;
+    err.payload = body;
     throw err;
   }
-  return json;
+  return body ?? {};
 }
 
 export const api = {
-  post: async (path, body) => {
-    const res = await fetch(`${BASE_URL}${path}`, {
-      method: "POST",
-      headers: authHeaders(),
-      body: JSON.stringify(body ?? {}),
-    });
-    return handle(res);
-  },
-  get: async (path) => {
-    const res = await fetch(`${BASE_URL}${path}`, {
+  get: async (path, opts = {}) => {
+    const res = await fetch(url(path), {
       method: "GET",
-      headers: authHeaders(),
+      headers: { ...authHeaders(), ...(opts.headers || {}) },
+      ...opts,
     });
     return handle(res);
   },
-  del: async (path) => {
-    const res = await fetch(`${BASE_URL}${path}`, {
+  post: async (path, body, opts = {}) => {
+    const res = await fetch(url(path), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...authHeaders(),
+        ...(opts.headers || {}),
+      },
+      body: JSON.stringify(body ?? {}),
+      ...opts,
+    });
+    return handle(res);
+  },
+  put: async (path, body, opts = {}) => {
+    const res = await fetch(url(path), {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        ...authHeaders(),
+        ...(opts.headers || {}),
+      },
+      body: JSON.stringify(body ?? {}),
+      ...opts,
+    });
+    return handle(res);
+  },
+  del: async (path, opts = {}) => {
+    const res = await fetch(url(path), {
       method: "DELETE",
-      headers: authHeaders(),
+      headers: { ...authHeaders(), ...(opts.headers || {}) },
+      ...opts,
     });
     return handle(res);
   },
