@@ -1,0 +1,149 @@
+/* Shopify-inspired Login Page */
+/* Shopify-inspired Login Page with animated gradient */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", "Segoe UI", Tahoma, sans-serif;
+  height: 100vh;
+  background: linear-gradient(-45deg, #004d40, #00695c, #1b5e20, #2e7d32);
+  background-size: 400% 400%;
+  animation: gradientShift 12s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.shopify-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.login-card {
+  width: 400px;
+  max-width: 90%;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  padding: 40px 30px;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: 700;
+  color: #008060;
+  margin-bottom: 30px;
+}
+
+/* ...rest of your login styles unchanged... */
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  font-size: 15px;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  border-color: #008060;
+  box-shadow: 0 0 0 2px rgba(0, 128, 96, 0.2);
+  outline: none;
+}
+
+.error {
+  color: #d32f2f;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.forgot-password {
+  text-align: right;
+  margin-bottom: 25px;
+  font-size: 13px;
+}
+
+.forgot-password span {
+  color: #008060;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.forgot-password span:hover {
+  text-decoration: underline;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px 0;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #008060;
+  color: #fff;
+  transition: background 0.2s ease;
+}
+
+.login-btn:hover {
+  background: #00684a;
+}
+
+.login-btn:disabled {
+  background: #9bc5b1;
+  cursor: not-allowed;
+}
+
+.signup-text {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #555;
+}
+
+.signup-text span {
+  color: #008060;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.signup-text span:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media screen and (max-width: 500px) {
+  .login-card {
+    padding: 30px 20px;
+  }
+
+  .logo {
+    font-size: 24px;
+  }
+
+  .form-input {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+}
