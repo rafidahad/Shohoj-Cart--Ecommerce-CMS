@@ -1,23 +1,28 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('shipping_rules', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('shop_id')->constrained('shops')->cascadeOnDelete();
-            $table->string('name', 150);
-            $table->integer('priority')->default(100);
-            $table->boolean('active')->default(true);
-            $table->json('conditions_json'); // {district, weight_grams, cod, total, ...}
-            $table->json('action_json');     // {carrier, service_code}
-            $table->timestamps();
-        });
+        DB::statement(<<<'SQL'
+CREATE TABLE `shipping_rules` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `shop_id` bigint unsigned NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `priority` int NOT NULL DEFAULT 100,
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `conditions_json` json NOT NULL,
+  `action_json` json NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `shipping_rules_shop_id_foreign` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SQL);
     }
+
     public function down(): void {
-        Schema::dropIfExists('shipping_rules');
+        DB::statement('DROP TABLE IF EXISTS `shipping_rules`;');
     }
 };

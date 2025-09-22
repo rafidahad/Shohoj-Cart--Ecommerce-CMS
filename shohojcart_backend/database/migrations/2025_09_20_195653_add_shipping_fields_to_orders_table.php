@@ -1,29 +1,25 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up()
+    public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->string('shipping_tracking_id')->nullable()->after('id');
-            $table->string('shipping_status')->nullable()->after('shipping_tracking_id');
-        });
+        DB::statement(<<<'SQL'
+ALTER TABLE `orders`
+  ADD `shipping_tracking_id` varchar(255) DEFAULT NULL AFTER `id`,
+  ADD `shipping_status` varchar(255) DEFAULT NULL AFTER `shipping_tracking_id`;
+SQL);
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down()
+    public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn(['shipping_tracking_id', 'shipping_status']);
-        });
+        DB::statement(<<<'SQL'
+ALTER TABLE `orders`
+  DROP COLUMN `shipping_tracking_id`,
+  DROP COLUMN `shipping_status`;
+SQL);
     }
 };

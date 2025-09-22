@@ -1,32 +1,40 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('orders', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('shop_id')->constrained('shops')->cascadeOnDelete();
-            $table->foreignId('customer_id')->nullable()->constrained('customers')->nullOnDelete();
-            $table->string('number', 40)->unique();
-            $table->enum('status', ['pending','confirmed','packed','shipped','delivered','completed','returned','cancelled'])->default('pending');
-            $table->decimal('subtotal', 12, 2)->default(0);
-            $table->decimal('discount_total', 12, 2)->default(0);
-            $table->decimal('shipping_total', 12, 2)->default(0);
-            $table->decimal('tax_total', 12, 2)->default(0);
-            $table->decimal('grand_total', 12, 2)->default(0);
-            $table->enum('payment_status', ['pending','paid','failed','refunded'])->default('pending');
-            $table->foreignId('billing_address_id')->nullable()->constrained('addresses')->nullOnDelete();
-            $table->foreignId('shipping_address_id')->nullable()->constrained('addresses')->nullOnDelete();
-            $table->dateTime('placed_at')->nullable();
-            $table->timestamps();
-
-            $table->index(['shop_id','status'], 'idx_orders_shop_status');
-        });
+        DB::statement(<<<'SQL'
+CREATE TABLE `orders` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `shop_id` bigint unsigned NOT NULL,
+  `customer_id` bigint unsigned DEFAULT NULL,
+  `number` varchar(40) NOT NULL,
+  `status` enum('pending','confirmed','packed','shipped','delivered','completed','returned','cancelled') NOT NULL DEFAULT 'pending',
+  `subtotal` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `discount_total` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `shipping_total` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `tax_total` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `grand_total` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `payment_status` enum('pending','paid','failed','refunded') NOT NULL DEFAULT 'pending',
+  `billing_address_id` bigint unsigned DEFAULT NULL,
+  `shipping_address_id` bigint unsigned DEFAULT NULL,
+  `placed_at` datetime DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `orders_number_unique` (`number`),
+  KEY `idx_orders_shop_status` (`shop_id`,`status`),
+  CONSTRAINT `orders_shop_id_foreign` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `orders_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `orders_billing_address_id_foreign` FOREIGN KEY (`billing_address_id`) REFERENCES `addresses` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `orders_shipping_address_id_foreign` FOREIGN KEY (`shipping_address_id`) REFERENCES `addresses` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SQL);
     }
+
     public function down(): void {
-        Schema::dropIfExists('orders');
+        DB::statement('DROP TABLE IF EXISTS `orders`;');
     }
 };

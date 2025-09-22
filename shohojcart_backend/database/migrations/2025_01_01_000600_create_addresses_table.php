@@ -1,26 +1,31 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('addresses', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete();
-            $table->string('name', 150)->nullable();
-            $table->string('phone', 40)->nullable();
-            $table->string('line1', 191);
-            $table->string('line2', 191)->nullable();
-            $table->string('city', 120);
-            $table->string('district', 120);
-            $table->string('postal_code', 20)->nullable();
-            $table->boolean('is_default')->default(false);
-            $table->timestamps();
-        });
+        DB::statement(<<<'SQL'
+CREATE TABLE `addresses` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `customer_id` bigint unsigned NOT NULL,
+  `name` varchar(150) DEFAULT NULL,
+  `phone` varchar(40) DEFAULT NULL,
+  `line1` varchar(191) NOT NULL,
+  `line2` varchar(191) DEFAULT NULL,
+  `city` varchar(120) NOT NULL,
+  `district` varchar(120) NOT NULL,
+  `postal_code` varchar(20) DEFAULT NULL,
+  `is_default` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `addresses_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SQL);
     }
+
     public function down(): void {
-        Schema::dropIfExists('addresses');
+        DB::statement('DROP TABLE IF EXISTS `addresses`;');
     }
 };

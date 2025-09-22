@@ -1,27 +1,31 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('combos', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('shop_id')->constrained('shops')->cascadeOnDelete();
-            $table->string('name', 160);
-            $table->string('slug', 191);
-            $table->string('sku', 64)->nullable()->unique();
-            $table->enum('status', ['draft','published','archived'])->default('draft');
-            $table->decimal('sell_price', 12, 2)->default(0);
-            $table->decimal('sourcing_cost', 12, 2)->default(0);
-            $table->timestamps();
-
-            $table->unique(['shop_id','slug'], 'uq_combo_shop_slug');
-        });
+        DB::statement(<<<'SQL'
+CREATE TABLE `combos` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `shop_id` bigint unsigned NOT NULL,
+  `name` varchar(160) NOT NULL,
+  `slug` varchar(191) NOT NULL,
+  `sku` varchar(64) DEFAULT NULL,
+  `status` enum('draft','published','archived') NOT NULL DEFAULT 'draft',
+  `sell_price` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `sourcing_cost` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `combos_sku_unique` (`sku`),
+  UNIQUE KEY `uq_combo_shop_slug` (`shop_id`,`slug`),
+  CONSTRAINT `combos_shop_id_foreign` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SQL);
     }
+
     public function down(): void {
-        Schema::dropIfExists('combos');
+        DB::statement('DROP TABLE IF EXISTS `combos`;');
     }
 };
-

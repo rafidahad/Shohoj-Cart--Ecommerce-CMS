@@ -1,25 +1,29 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('payments', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
-            $table->enum('provider', ['sslcommerz','bkash','nagad','cod']);
-            $table->string('txn_id', 120)->nullable();
-            $table->decimal('amount', 12, 2);
-            $table->enum('status', ['initiated','authorized','captured','failed','refunded'])->default('initiated');
-            $table->json('payload_json')->nullable();
-            $table->timestamps();
-
-            $table->index(['order_id','status'], 'idx_payments_order_status');
-        });
+        DB::statement(<<<'SQL'
+CREATE TABLE `payments` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `order_id` bigint unsigned NOT NULL,
+  `provider` enum('sslcommerz','bkash','nagad','cod') NOT NULL,
+  `txn_id` varchar(120) DEFAULT NULL,
+  `amount` decimal(12,2) NOT NULL,
+  `status` enum('initiated','authorized','captured','failed','refunded') NOT NULL DEFAULT 'initiated',
+  `payload_json` json DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_payments_order_status` (`order_id`,`status`),
+  CONSTRAINT `payments_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SQL);
     }
+
     public function down(): void {
-        Schema::dropIfExists('payments');
+        DB::statement('DROP TABLE IF EXISTS `payments`;');
     }
 };

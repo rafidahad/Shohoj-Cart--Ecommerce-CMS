@@ -1,23 +1,27 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('inventory_movements', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('component_id')->constrained('components')->restrictOnDelete();
-            $table->decimal('delta', 12, 3);
-            $table->enum('reason', ['order','refund','adjustment','assembly_build','assembly_consume']);
-            $table->enum('ref_type', ['order','return','manual','job'])->nullable();
-            $table->unsignedBigInteger('ref_id')->nullable();
-            $table->timestamp('created_at')->useCurrent();
-            $table->index(['component_id','created_at'], 'idx_inv_component_created');
-        });
+        DB::statement(<<<'SQL'
+CREATE TABLE `inventory_movements` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `component_id` bigint unsigned NOT NULL,
+  `delta` decimal(12,3) NOT NULL,
+  `reason` enum('order','refund','adjustment','assembly_build','assembly_consume') NOT NULL,
+  `ref_type` enum('order','return','manual','job') DEFAULT NULL,
+  `ref_id` bigint unsigned DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_inv_component_created` (`component_id`,`created_at`),
+  CONSTRAINT `inventory_movements_component_id_foreign` FOREIGN KEY (`component_id`) REFERENCES `components` (`id`) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SQL);
     }
+
     public function down(): void {
-        Schema::dropIfExists('inventory_movements');
+        DB::statement('DROP TABLE IF EXISTS `inventory_movements`;');
     }
 };

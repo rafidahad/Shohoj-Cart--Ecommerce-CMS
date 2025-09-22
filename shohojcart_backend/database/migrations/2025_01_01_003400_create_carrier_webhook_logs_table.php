@@ -1,21 +1,24 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('carrier_webhook_logs', function (Blueprint $table) {
-            $table->id();
-            $table->enum('carrier', ['steadfast','redx','pathao','other']);
-            $table->string('endpoint', 120);
-            $table->json('payload_json');
-            $table->dateTime('received_at')->useCurrent();
-            $table->boolean('processed')->default(false);
-        });
+        DB::statement(<<<'SQL'
+CREATE TABLE `carrier_webhook_logs` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `carrier` enum('steadfast','redx','pathao','other') NOT NULL,
+  `endpoint` varchar(120) NOT NULL,
+  `payload_json` json NOT NULL,
+  `received_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `processed` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SQL);
     }
+
     public function down(): void {
-        Schema::dropIfExists('carrier_webhook_logs');
+        DB::statement('DROP TABLE IF EXISTS `carrier_webhook_logs`;');
     }
 };
