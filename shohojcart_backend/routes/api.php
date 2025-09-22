@@ -42,6 +42,19 @@ Route::get('orders/{order}', [CheckoutController::class, 'status']);
 Route::post('payments/{order}/init', [PaymentController::class, 'init']); // provider: cod|sslcommerz|bkash|nagad
 Route::post('payments/webhook/{provider}', [PaymentController::class, 'webhook']);
 
+
+// Products (public read)
+Route::get('products', [ProductController::class, 'index']);
+Route::get('products/{product}', [ProductController::class, 'show']);
+
+// Shops (public read)
+Route::get('shops/slug/{slug}', [ShopController::class, 'showBySlug']);
+Route::get('shops/{shop}',       [ShopController::class, 'show']);
+
+// Shop browsing (public read)
+Route::get('shops/{shop}/products',                        [ProductController::class, 'byShop']);
+Route::get('shops/{shop}/products/{product:slug}',         [ProductController::class, 'showByShopAndSlug']);
+
 /*
 |--------------------------------------------------------------------------
 | Public auth

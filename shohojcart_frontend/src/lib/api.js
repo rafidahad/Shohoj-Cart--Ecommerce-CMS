@@ -86,3 +86,81 @@ export const api = {
     return handle(res);
   },
 };
+async function call(path, opts = {}) {
+  const res = await fetch(path.startsWith("http") ? path : `${BASE}/${path}`, {
+    headers: { "Content-Type": "application/json", ...(opts.headers || {}) },
+    credentials: "omit",
+    ...opts,
+  });
+  if (!res.ok) {
+    let msg = "Request failed";
+    try {
+      const j = await res.json();
+      msg = j.message || JSON.stringify(j);
+    } catch {}
+    throw new Error(msg);
+  }
+  return res.json();
+}
+
+export async function getShopBySlug(slug) {
+  const j = await call(`shops/slug/${encodeURIComponent(slug)}/storefront`);
+  return j.data;
+}
+
+export async function listProducts(shopId, params = {}) {
+  const q = new URLSearchParams({ per_page: "24", ...params });
+  const j = await call(`shops/${shopId}/storefront/products?` + q.toString());
+  return j.data; // paginator
+}
+
+export function cartKey(shopId) {
+  return `cart_${shopId}`;
+}
+
+export async function ensureCart(shopId) {
+  const key = cartKey(shopId);
+  const cached = localStorage.getItem(key);
+  if (cached) return JSON.parse(cached);
+  const j = await call(`carts`, {
+    method: "POST",
+    body: JSON.stringify({ shop_id: shopId }),
+  });
+  localStorage.setItem(key, JSON.stringify(j.data));
+  return j.data;
+}
+
+export async function getCart(cartId) {
+  const j = await call(`carts/${cartId}`);
+  return j.data;
+}
+
+// Add product OR combo to cart — pass one of: {product_id, qty} OR {combo_id, qty}
+export async function addItem(cartId, body) {
+  const j = await call(`carts/${cartId}/items`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+  return j; // { data: item, cart }
+}
+
+export async function updateItem(cartId, itemId, qty) {
+  const j = await call(`carts/${cartId}/items/${itemId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ qty }),
+  });
+  return j.data; // updated cart
+}
+
+export async function removeItem(cartId, itemId) {
+  const j = await call(`carts/${cartId}/items/${itemId}`, { method: "DELETE" });
+  return j.data; // updated cart
+}
+
+export async function checkout(payload) {
+  const j = await call(`checkout`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+  return j.data; // order
+};
