@@ -148,4 +148,33 @@ class ProductController extends Controller
         $product->delete();
         return response()->json(['message' => 'Product deleted successfully']);
     }
+
+    /**
+     * POST /api/ai/product-description
+     * Generate a product description using AI
+     */
+    public function generateProductDescription(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'product_name' => 'required|string|max:191',
+            'key_features' => 'nullable|array',
+            'key_features.*' => 'string|max:191',
+        ]);
+
+        $productName = $validated['product_name'];
+        $keyFeatures = $validated['key_features'] ?? [];
+
+        try {
+            // Simulate AI description generation logic
+            $description = "Introducing our latest product: {$productName}.";
+
+            if (!empty($keyFeatures)) {
+                $description .= " Key features include: " . implode(', ', $keyFeatures) . ".";
+            }
+
+            return response()->json(['description' => $description]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to generate product description', 'error' => $e->getMessage()], 500);
+        }
+    }
 }
