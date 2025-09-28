@@ -1,91 +1,87 @@
 // src/lib/api.js
-const RAW_BASE =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
-const BASE_URL = RAW_BASE.replace(/\/+$/, ""); // strip trailing slashes
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://api-shohojcart.onrender.com/api';
 
-function url(path) {
-  // Accept absolute URLs (e.g., Laravel paginator next_page_url) or join with BASE_URL
-  if (/^https?:\/\//i.test(path)) return path;
-  return `${BASE_URL}/${String(path).replace(/^\/+/, "")}`;
-}
-
-function authHeaders() {
-  const token = localStorage.getItem("auth_token");
-  const shopId =
-    localStorage.getItem("shop_id") || import.meta.env.VITE_DEFAULT_SHOP_ID;
-
-  const headers = {
-    Accept: "application/json",
-    "X-Requested-With": "XMLHttpRequest", // safe for Laravel
-  };
-  if (token) headers.Authorization = `Bearer ${token}`;
-  if (shopId) headers["X-Shop-Id"] = String(shopId);
-  return headers;
-}
-
-async function handle(res) {
-  let body = null;
-  // Try parse JSON; if not JSON, keep as text
-  const ct = res.headers.get("content-type") || "";
-  if (ct.includes("application/json")) {
-    try {
-      body = await res.json();
-    } catch {}
-  } else {
-    try {
-      body = await res.text();
-    } catch {}
-  }
-
-  if (!res.ok) {
-    // pull first validation error if present
-    const firstFieldErr =
-      body && body.errors && Object.values(body.errors)?.[0]?.[0];
-    const msg =
-      firstFieldErr ||
-      (body && body.message) ||
-      (body && body.error) ||
-      `HTTP ${res.status}`;
-    const err = new Error(msg);
-    err.status = res.status;
-    err.payload = body;
-    throw err;
-  }
-  // Always return something object-like
-  return typeof body === "undefined" || body === null ? {} : body;
-}
-
-// unified request (uses url() + authHeaders() + handle())
-async function request(path, { method = "GET", body, headers, ...opts } = {}) {
-  const isJSON = body !== undefined && !(body instanceof FormData);
-  const res = await fetch(url(path), {
-    method,
-    headers: {
-      ...(isJSON ? { "Content-Type": "application/json" } : {}),
-      ...authHeaders(),
-      ...(headers || {}),
-    },
-    body: isJSON ? JSON.stringify(body) : body,
-    credentials: "omit",
-    ...opts,
-  });
-  return handle(res);
-}
-
-// Public client
 export const api = {
-  get: (path, opts = {}) => request(path, { method: "GET", ...opts }),
-  post: (path, body, opts = {}) =>
-    request(path, { method: "POST", body, ...opts }),
-  put: (path, body, opts = {}) =>
-    request(path, { method: "PUT", body, ...opts }),
-  patch: (path, body, opts = {}) =>
-    request(path, { method: "PATCH", body, ...opts }),
-  del: (path, opts = {}) => request(path, { method: "DELETE", ...opts }),
+  async get(endpoint) {
+    const token = localStorage.getItem('auth_token');
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+      },
+      credentials: 'include',
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  },
+
+  async post(endpoint, data) {
+    const token = localStorage.getItem('auth_token');
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+      },
+      credentials: 'include',
+      body: JSON.stringify(data),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  },
+
+  async put(endpoint, data) {
+    const token = localStorage.getItem('auth_token');
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+      },
+      credentials: 'include',
+      body: JSON.stringify(data),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  },
+
+  async delete(endpoint) {
+    const token = localStorage.getItem('auth_token');
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+      },
+      credentials: 'include',
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  },
 };
 
-// For convenience if some code still imports call()
-export const call = request;
+export default api;
 
 /* =========================
    Higher-level storefront helpers

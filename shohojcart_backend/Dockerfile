@@ -1,39 +1,51 @@
-# ---------- Stage 1: Composer deps ----------
-FROM composer:2 AS vendor
-WORKDIR /app
+FROM php:8.2-fpm
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    nginx \
+    supervisor \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www
+
+# Copy composer files
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-scripts --no-interaction --prefer-dist --no-progress
 
-# ---------- Stage 2: PHP Runtime ----------
-FROM php:8.2-cli-alpine
+# Install PHP dependencies
+RUN composer install --no-dev --no-scripts --no-autoloader
 
-# System deps for common Laravel extensions
-RUN apk add --no-cache \
-  bash git curl icu-dev oniguruma-dev libzip-dev zlib-dev libpng-dev \
-  libjpeg-turbo-dev freetype-dev
-
-# PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
- && docker-php-ext-install -j$(nproc) pdo_mysql bcmath intl zip mbstring gd opcache
-
-# Opcache tuning (for prod)
-COPY .docker/php.ini /usr/local/etc/php/conf.d/zz-custom.ini
-
-WORKDIR /var/www/html
-
-# App code + vendor from build stage
+# Copy application code
 COPY . .
-COPY --from=vendor /app/vendor ./vendor
 
-# Ensure storage writable as before (still root here)
-RUN addgroup -g 1000 laravel && adduser -G laravel -g laravel -D -u 1000 laravel \
- && chown -R laravel:laravel storage bootstrap/cache
+# Generate autoloader
+RUN composer dump-autoload --optimize
 
-# ✅ Copy entrypoint with correct permissions and ownership
-COPY --chown=laravel:laravel --chmod=0755 .docker/entrypoint.sh /entrypoint.sh
+# Set permissions
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 755 /var/www/storage \
+    && chmod -R 755 /var/www/bootstrap/cache
 
-# Switch to non-root only AFTER entrypoint is copied
-USER laravel
+# Create health check endpoint
+RUN echo '<?php return response()->json(["status" => "healthy", "timestamp" => now()]);' > /var/www/routes/health.php
 
+# Expose port (Render will override this)
 EXPOSE 8000
-CMD ["/entrypoint.sh"]
+
+# Start command
+CMD php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache && \
+    php artisan migrate --force && \
+    php artisan serve --host=0.0.0.0 --port=${PORT:-8000}

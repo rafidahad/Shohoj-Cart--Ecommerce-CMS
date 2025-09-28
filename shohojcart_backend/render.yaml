@@ -3,23 +3,28 @@ services:
     name: shohojcart-backend
     env: docker
     plan: free
-    healthCheckPath: /
+    healthCheckPath: /api/health
     autoDeploy: true
     buildCommand: |
+      composer install --no-dev --optimize-autoloader
       php artisan config:clear
       php artisan config:cache
       php artisan route:cache
+      php artisan view:cache
+    startCommand: "php artisan serve --host=0.0.0.0 --port=$PORT"
     envVars:
+      - key: APP_NAME
+        value: ShohojCart
       - key: APP_ENV
         value: production
+      - key: APP_KEY
+        value: base64:6jOugj61MaYxk0nfX9dlft9id+T06J7ts681Vs06aLg=
       - key: APP_DEBUG
-        value: false
+        value: "false"
       - key: APP_URL
         value: https://api-shohojcart.onrender.com
-      - key: RUN_MIGRATIONS
-        value: "true"  # use a separate job/hook for migrations
-      # ---- DB (remote) ----
-     
+      
+      # Database Configuration
       - key: DB_CONNECTION
         value: mysql
       - key: DB_HOST
@@ -32,15 +37,41 @@ services:
         value: root
       - key: DB_PASSWORD
         value: hplQQIyLUpKcyphfsqmRXVOSGrSWkQQJ
-      # ---- Sanctum / Cookies for local Vite frontend ----
-      - key: SESSION_DRIVER
-        value: cookie
-      - key: SESSION_SECURE_COOKIE
-        value: "true"
-      - key: SANCTUM_STATEFUL_DOMAINS
-        value: shohoj-cart-ecommerce-cms.onrender.com
-      - key: SESSION_DOMAIN
-        value: .onrender.com
-      # ---- Frontend URL ----
+      
+      # CORS and Frontend Configuration
       - key: FRONTEND_URL
         value: https://shohoj-cart-ecommerce-cms.onrender.com
+      - key: SANCTUM_STATEFUL_DOMAINS
+        value: shohoj-cart-ecommerce-cms.onrender.com
+      
+      # Session Configuration
+      - key: SESSION_DRIVER
+        value: cookie
+      - key: SESSION_LIFETIME
+        value: "120"
+      - key: SESSION_ENCRYPT
+        value: "false"
+      - key: SESSION_PATH
+        value: /
+      - key: SESSION_DOMAIN
+        value: .onrender.com
+      - key: SESSION_SECURE_COOKIE
+        value: "true"
+      - key: SESSION_HTTP_ONLY
+        value: "true"
+      - key: SESSION_SAME_SITE
+        value: none
+      
+      # Cache Configuration
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      
+      # Mail Configuration
+      - key: MAIL_MAILER
+        value: log
+      - key: MAIL_FROM_ADDRESS
+        value: noreply@shohojcart.com
+      - key: MAIL_FROM_NAME
+        value: ShohojCart

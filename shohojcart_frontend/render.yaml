@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: shohojcart-frontend
+    env: static
+    plan: free
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://api-shohojcart.onrender.com/api
+      - key: VITE_APP_URL
+        value: https://shohoj-cart-ecommerce-cms.onrender.com
