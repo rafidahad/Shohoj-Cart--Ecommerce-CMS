@@ -33,6 +33,9 @@ Route::get('/shops/{shop}', [ShopController::class, 'show']);
 Route::get('/products/{product}', [ProductController::class, 'show']);
 Route::get('/shops/slug/{slug}/storefront', [ShopController::class, 'showBySlug']);
 
+// AI product description generation
+Route::post('/ai/product-description', [ProductController::class, 'generateProductDescription']);
+
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     // Auth user info
