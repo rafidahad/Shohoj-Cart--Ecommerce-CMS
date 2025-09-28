@@ -31,6 +31,7 @@ Route::prefix('auth')->group(function () {
 Route::get('/shops/{shop}/products', [ShopController::class, 'getProducts']);
 Route::get('/shops/{shop}', [ShopController::class, 'show']);
 Route::get('/products/{product}', [ProductController::class, 'show']);
+Route::get('/shops/slug/{slug}/storefront', [ShopController::class, 'showBySlug']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {

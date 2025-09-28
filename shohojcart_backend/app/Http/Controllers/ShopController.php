@@ -103,7 +103,8 @@ class ShopController extends Controller
             $user->roles()->attach($role->id);
         }
     }
-     public function show(Shop $shop): JsonResponse
+
+    public function show(Shop $shop): JsonResponse
     {
         return response()->json([
             'id'        => $shop->id,
@@ -116,22 +117,28 @@ class ShopController extends Controller
         ]);
     }
 
-public function showBySlug(string $slug): JsonResponse
-{
-    $shop = Shop::where('slug', $slug)->first();
+    public function showBySlug(string $slug): JsonResponse
+    {
+        $shop = Shop::where('slug', $slug)->first();
 
-    if (!$shop) {
-        return response()->json(['message' => 'Shop not found'], 404);
+        if (!$shop) {
+            return response()->json(['message' => 'Shop not found'], 404);
+        }
+
+        return response()->json([
+            'id'        => $shop->id,
+            'name'      => $shop->name,
+            'slug'      => $shop->slug,
+            'location'  => $shop->location,
+            'owner_name'=> $shop->owner_name,
+            'details'   => $shop->details,
+            'active'    => $shop->active,
+        ]);
     }
 
-    return response()->json([
-        'id'        => $shop->id,
-        'name'      => $shop->name,
-        'slug'      => $shop->slug,
-        'location'  => $shop->location,
-        'owner_name'=> $shop->owner_name,
-        'details'   => $shop->details,
-        'active'    => $shop->active,
-    ]);
-}
+    public function getProducts(Shop $shop): JsonResponse
+    {
+        $products = $shop->products; // Assuming a relationship exists
+        return response()->json(['products' => $products]);
+    }
 }
