@@ -1,28 +1,33 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('shop_id')->constrained('shops')->cascadeOnDelete();
-            $table->string('name', 191);
-            $table->string('slug', 191);
-            $table->string('sku', 64)->nullable()->unique();
-            $table->enum('status', ['draft','published','archived'])->default('draft');
-            $table->decimal('sell_price', 12, 2)->default(0);
-            $table->decimal('sourcing_cost', 12, 2)->default(0);
-            $table->enum('stock_policy', ['derive','manual'])->default('derive');
-            $table->text('description')->nullable();
-            $table->timestamps();
-
-            $table->unique(['shop_id','slug'], 'uq_product_shop_slug');
-        });
+        DB::statement(<<<'SQL'
+CREATE TABLE `products` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `shop_id` bigint unsigned NOT NULL,
+  `name` varchar(191) NOT NULL,
+  `slug` varchar(191) NOT NULL,
+  `sku` varchar(64) DEFAULT NULL,
+  `status` enum('draft','published','archived') NOT NULL DEFAULT 'draft',
+  `sell_price` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `sourcing_cost` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `stock_policy` enum('derive','manual') NOT NULL DEFAULT 'derive',
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `products_sku_unique` (`sku`),
+  UNIQUE KEY `uq_product_shop_slug` (`shop_id`,`slug`),
+  CONSTRAINT `products_shop_id_foreign` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SQL);
     }
+
     public function down(): void {
-        Schema::dropIfExists('products');
+        DB::statement('DROP TABLE IF EXISTS `products`;');
     }
 };

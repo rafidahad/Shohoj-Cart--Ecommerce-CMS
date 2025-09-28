@@ -1,26 +1,30 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('competitor_prices', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('shop_id')->constrained('shops')->cascadeOnDelete();
-            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
-            $table->string('source', 80);
-            $table->string('title', 255)->nullable();
-            $table->string('url', 255)->nullable();
-            $table->decimal('price', 12, 2);
-            $table->dateTime('fetched_at');
-            $table->timestamp('created_at')->nullable();
-
-            $table->index(['product_id','fetched_at'], 'idx_compprice_product_time');
-        });
+        DB::statement(<<<'SQL'
+CREATE TABLE `competitor_prices` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `shop_id` bigint unsigned NOT NULL,
+  `product_id` bigint unsigned NOT NULL,
+  `source` varchar(80) NOT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  `price` decimal(12,2) NOT NULL,
+  `fetched_at` datetime NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_compprice_product_time` (`product_id`,`fetched_at`),
+  CONSTRAINT `competitor_prices_shop_id_foreign` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `competitor_prices_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SQL);
     }
+
     public function down(): void {
-        Schema::dropIfExists('competitor_prices');
+        DB::statement('DROP TABLE IF EXISTS `competitor_prices`;');
     }
 };

@@ -10,11 +10,38 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\AiController;
 
-/*
-|--------------------------------------------------------------------------
-| Public, read-only endpoints
-|--------------------------------------------------------------------------
-*/
+use App\Http\Controllers\Storefront\{CartController, CheckoutController, StorefrontProductController, CouponController, AddressController, PaymentController};
+
+
+// Public storefront browsing
+Route::get('shops/slug/{slug}/storefront', [StorefrontProductController::class, 'shopBySlug']);
+Route::get('shops/{shop}/storefront/products', [StorefrontProductController::class, 'list']);
+Route::get('shops/{shop}/storefront/products/{product:slug}', [StorefrontProductController::class, 'show']);
+
+
+// Guest carts (token-based)
+Route::post('carts', [CartController::class, 'create']);
+Route::get('carts/{cart}', [CartController::class, 'show']);
+Route::post('carts/{cart}/items', [CartController::class, 'addItem']); // product_id or combo_id
+Route::patch('carts/{cart}/items/{item}', [CartController::class, 'updateQty']);
+Route::delete('carts/{cart}/items/{item}', [CartController::class, 'removeItem']);
+
+
+// Addresses for guest checkout
+Route::post('addresses', [AddressController::class, 'store']);
+
+
+// Coupons (optional)
+Route::post('carts/{cart}/apply-coupon', [CouponController::class, 'apply']);
+Route::delete('carts/{cart}/remove-coupon', [CouponController::class, 'remove']);
+
+
+// Checkout & payments
+Route::post('checkout', [CheckoutController::class, 'checkout']);
+Route::get('orders/{order}', [CheckoutController::class, 'status']);
+Route::post('payments/{order}/init', [PaymentController::class, 'init']); // provider: cod|sslcommerz|bkash|nagad
+Route::post('payments/webhook/{provider}', [PaymentController::class, 'webhook']);
+
 
 // Products (public read)
 Route::get('products', [ProductController::class, 'index']);

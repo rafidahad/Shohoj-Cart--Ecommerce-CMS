@@ -1,27 +1,33 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('cart_items', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('cart_id')->constrained('carts')->cascadeOnDelete();
-            $table->foreignId('product_id')->nullable()->constrained('products')->cascadeOnDelete();
-            $table->foreignId('combo_id')->nullable()->constrained('combos')->cascadeOnDelete();
-            $table->integer('qty');
-            $table->decimal('unit_price', 12, 2);
-            $table->json('payload_json')->nullable();
-            $table->timestamps();
-
-            $table->index('cart_id', 'idx_cart_items_cart');
-            $table->index('product_id', 'idx_cart_items_product');
-            $table->index('combo_id', 'idx_cart_items_combo');
-        });
+        DB::statement(<<<'SQL'
+CREATE TABLE `cart_items` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `cart_id` bigint unsigned NOT NULL,
+  `product_id` bigint unsigned DEFAULT NULL,
+  `combo_id` bigint unsigned DEFAULT NULL,
+  `qty` int NOT NULL,
+  `unit_price` decimal(12,2) NOT NULL,
+  `payload_json` json DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_cart_items_cart` (`cart_id`),
+  KEY `idx_cart_items_product` (`product_id`),
+  KEY `idx_cart_items_combo` (`combo_id`),
+  CONSTRAINT `cart_items_cart_id_foreign` FOREIGN KEY (`cart_id`) REFERENCES `carts` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `cart_items_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `cart_items_combo_id_foreign` FOREIGN KEY (`combo_id`) REFERENCES `combos` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SQL);
     }
+
     public function down(): void {
-        Schema::dropIfExists('cart_items');
+        DB::statement('DROP TABLE IF EXISTS `cart_items`;');
     }
 };

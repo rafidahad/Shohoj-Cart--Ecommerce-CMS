@@ -1,19 +1,23 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('app_settings', function (Blueprint $table) {
-            $table->id();
-            $table->string('k', 191)->unique();
-            $table->json('v')->nullable();
-            $table->timestamps();
-        });
+        DB::statement(<<<'SQL'
+CREATE TABLE `app_settings` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `k` varchar(191) NOT NULL UNIQUE,
+  `v` json DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SQL);
     }
+
     public function down(): void {
-        Schema::dropIfExists('app_settings');
+        DB::statement('DROP TABLE IF EXISTS `app_settings`;');
     }
 };

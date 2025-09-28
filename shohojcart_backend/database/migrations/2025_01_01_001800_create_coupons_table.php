@@ -1,29 +1,33 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('coupons', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('shop_id')->constrained('shops')->cascadeOnDelete();
-            $table->string('code', 40);
-            $table->enum('type', ['amount','percent']);
-            $table->decimal('value', 12, 2);
-            $table->decimal('min_spend', 12, 2)->nullable();
-            $table->dateTime('starts_at')->nullable();
-            $table->dateTime('ends_at')->nullable();
-            $table->integer('usage_limit')->nullable();
-            $table->integer('used_count')->default(0);
-            $table->enum('status', ['active','inactive'])->default('active');
-            $table->timestamps();
-
-            $table->unique(['shop_id','code'], 'uq_coupon_shop_code');
-        });
+        DB::statement(<<<'SQL'
+CREATE TABLE `coupons` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `shop_id` bigint unsigned NOT NULL,
+  `code` varchar(40) NOT NULL,
+  `type` enum('amount','percent') NOT NULL,
+  `value` decimal(12,2) NOT NULL,
+  `min_spend` decimal(12,2) DEFAULT NULL,
+  `starts_at` datetime DEFAULT NULL,
+  `ends_at` datetime DEFAULT NULL,
+  `usage_limit` int DEFAULT NULL,
+  `used_count` int NOT NULL DEFAULT 0,
+  `status` enum('active','inactive') NOT NULL DEFAULT 'active',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_coupon_shop_code` (`shop_id`,`code`),
+  CONSTRAINT `coupons_shop_id_foreign` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SQL);
     }
+
     public function down(): void {
-        Schema::dropIfExists('coupons');
+        DB::statement('DROP TABLE IF EXISTS `coupons`;');
     }
 };

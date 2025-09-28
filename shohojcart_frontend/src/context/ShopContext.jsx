@@ -12,11 +12,13 @@ export function ShopProvider({ children }) {
 
   const setBySlug = async (slug) => {
     try {
-      const res = await api.get(`/shops/slug/${encodeURIComponent(slug)}`);
+      // storefront-safe shop
+      const res = await api.get(`/shops/slug/${encodeURIComponent(slug)}/storefront`);
       const s = res.data ?? res;
       setShop(s);
       localStorage.setItem("shop_ctx", JSON.stringify(s));
       localStorage.setItem("shop_id", String(s.id));
+      localStorage.setItem("shop_slug", s.slug || slug); 
       return s;
     } catch (err) {
       if (err?.status === 404) {
@@ -24,7 +26,7 @@ export function ShopProvider({ children }) {
         setShop(null);
         localStorage.removeItem("shop_ctx");
         localStorage.removeItem("shop_id");
-        return null; // 👈 don't throw on 404
+        return null;
       }
       throw err;
     }
@@ -32,4 +34,7 @@ export function ShopProvider({ children }) {
 
   return <ShopContext.Provider value={{ shop, setBySlug }}>{children}</ShopContext.Provider>;
 }
-export function useShop(){ return useContext(ShopContext); }
+
+export function useShop() {
+  return useContext(ShopContext);
+}
