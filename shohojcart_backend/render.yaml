@@ -34,6 +34,6 @@ services:
       - key: SESSION_SECURE_COOKIE
         value: "true"
       - key: SANCTUM_STATEFUL_DOMAINS
-        value: localhost:5173
+        value: shohoj-cart-ecommerce-cms.onrender.com
       - key: SESSION_DOMAIN
         value: .onrender.com

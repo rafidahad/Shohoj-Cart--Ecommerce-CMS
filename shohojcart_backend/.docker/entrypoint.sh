@@ -20,10 +20,10 @@ php artisan route:clear || true
 php artisan view:clear || true
 
 # Run migrations automatically if explicitly enabled
-if [ "${RUN_MIGRATIONS:-false}" = "true" ]; then
+
   echo "Running migrations..."
   php artisan migrate --force || true
-fi
+
 
 # Start Laravel dev server (Render proxy will front it)
 exec php artisan serve --host=0.0.0.0 --port=8000
