@@ -63,3 +63,13 @@ class ApiClient {
 
 export const api = new ApiClient();
 export default api;
+
+export async function ensureCart() {
+  try {
+    const response = await api.post('/cart/ensure');
+    return response;
+  } catch (error) {
+    console.error('Failed to ensure cart:', error);
+    throw error;
+  }
+}
