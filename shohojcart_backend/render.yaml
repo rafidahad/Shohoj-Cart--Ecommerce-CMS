@@ -37,3 +37,6 @@ services:
         value: shohoj-cart-ecommerce-cms.onrender.com
       - key: SESSION_DOMAIN
         value: .onrender.com
+      # ---- Frontend URL ----
+      - key: FRONTEND_URL
+        value: https://shohoj-cart-ecommerce-cms.onrender.com
