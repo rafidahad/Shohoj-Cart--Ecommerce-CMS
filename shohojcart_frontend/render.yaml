@@ -2,8 +2,28 @@ services:
   - type: web
     name: shohojcart-frontend
     env: static
-    buildCommand: npm ci && npm run build
-    staticPublishPath: dist
+    plan: free
+    buildCommand: |
+      rm -rf node_modules package-lock.json .vite
+      npm cache clean --force
+      npm install
+      npm run build
+    staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
+      - key: VITE_API_BASE_URL
+        value: https://api-shohojcart.onrender.com/api
+      - key: VITE_APP_URL
+        value: https://shohoj-cart-ecommerce-cms.onrender.com
+      - key: VITE_APP_NAME
+        value: ShohojCart
+      - key: VITE_AI_DESC_ENDPOINT
+        value: /ai/product-description
+      - key: VITE_DEFAULT_SHOP_ID
+        value: "1"
       - key: NODE_VERSION
-        value: "18"
+        value: "20"

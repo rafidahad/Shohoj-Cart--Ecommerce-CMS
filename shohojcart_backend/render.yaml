@@ -11,6 +11,7 @@ services:
       php artisan config:cache
       php artisan route:cache
       php artisan view:cache
+      php artisan migrate --force
     startCommand: "php artisan serve --host=0.0.0.0 --port=$PORT"
     envVars:
       - key: APP_NAME
@@ -49,10 +50,6 @@ services:
         value: cookie
       - key: SESSION_LIFETIME
         value: "120"
-      - key: SESSION_ENCRYPT
-        value: "false"
-      - key: SESSION_PATH
-        value: /
       - key: SESSION_DOMAIN
         value: .onrender.com
       - key: SESSION_SECURE_COOKIE

@@ -1,75 +1,94 @@
-// src/App.jsx
-import "./App.css";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ShopProvider } from './context/ShopContext';
+import ProtectedRoute from './components/dashboard/ProtectedRoute';
 
-import Login from "./pages/Login/Login";
-import Signup from "./pages/SignUp/Signup";
+// Auth pages
+import Login from './pages/Login/Login';
+import Signup from './pages/SignUp/Signup';
 
-import Layout from "./components/Layout";
-import Protected from "./components/Protected";
-
-// Dashboard pages (slug-scoped)
-import Home from "./pages/dashboard/Home";
-import Orders from "./pages/dashboard/Orders";
-import Products from "./pages/dashboard/Products";
-import Customers from "./pages/dashboard/Customers";
-import Marketing from "./pages/dashboard/Marketing";
-import Discounts from "./pages/dashboard/Discounts";
-import Analytics from "./pages/dashboard/Analytics";
-import Content from "./pages/dashboard/Content";
-import Markets from "./pages/dashboard/Markets";
-import OnlineStore from "./pages/dashboard/OnlineStore";
-import Apps from "./pages/dashboard/Apps";
-import Settings from "./pages/dashboard/Settings";
-import ProductNew from "./pages/dashboard/ProductNew";
+// Dashboard pages
+import DashboardHome from './pages/dashboard/Home';
+import Products from './pages/dashboard/Products';
+import ProductNew from './pages/dashboard/ProductNew';
+import Orders from './pages/dashboard/Orders';
+import Customers from './pages/dashboard/Customers';
+import Analytics from './pages/dashboard/Analytics';
+import Settings from './pages/dashboard/Settings';
 
 // Storefront pages
-import ShopHome from "./components/Storefront/ShopHome.jsx";
-import ShopProduct from "./components/Storefront/ShopProduct.jsx";
-import Cart from "./components/Storefront/Cart.jsx";
-import Checkout from "./components/Storefront/Checkout.jsx";
+import ShopHome from './components/Storefront/ShopHome';
+import ProductPage from './components/Storefront/ProductPage';
 
-export default function App() {
+import './App.css';
+
+function App() {
   return (
-    <Routes>
-      {/* Default -> login */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
-
-      {/* Public storefront */}
-<Route path="/s/:shopSlug" element={<ShopHome />} />
-<Route path="/s/:shopSlug/product/:productSlug" element={<ShopProduct />} />
-<Route path="/s/:shopSlug/cart" element={<Cart />} />
-<Route path="/s/:shopSlug/checkout" element={<Checkout />} />
-      {/* Slug-scoped dashboard */}
-      <Route
-        path="/d/:shopSlug"
-        element={
-          <Protected>
-            <Layout />
-          </Protected>
-        }
-      >
-        <Route index element={<Home />} />
-        <Route path="orders" element={<Orders />} />
-        <Route path="products" element={<Products />} />
-        <Route path="customers" element={<Customers />} />
-        <Route path="marketing" element={<Marketing />} />
-        <Route path="discounts" element={<Discounts />} />
-        <Route path="analytics" element={<Analytics />} />
-        <Route path="content" element={<Content />} />
-        <Route path="markets" element={<Markets />} />
-        <Route path="onlinestore" element={<OnlineStore />} />
-        <Route path="apps" element={<Apps />} />
-        <Route path="settings" element={<Settings />} />
-        <Route path="products/new" element={<ProductNew />} />
-      </Route>
-
-      {/* Auth */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to="/login" replace />} />
-    </Routes>
-  );
+    <AuthProvider>
+      <ShopProvider>
+        <Router>
+          <div className="App">
+            <Routes>
+              {/* Public routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              
+              {/* Storefront routes */}
+              <Route path="/store/:shop_id" element={<ShopHome />} />
+              <Route path="/store/:shop_id/product/:product_id" element={<ProductPage />} />
+              
+              {/* Protected dashboard routes */}
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <DashboardHome />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/dashboard/products" element={
+                <ProtectedRoute>
+                  <Products />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/dashboard/products/new" element={
+                <ProtectedRoute>
+                  <ProductNew />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/dashboard/orders" element={
+                <ProtectedRoute>
+                  <Orders />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/dashboard/customers" element={
+                <ProtectedRoute>
+                  <Customers />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/dashboard/analytics" element={
+                <ProtectedRoute>
+                  <Analytics />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/dashboard/settings" element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              } />
+              
+              {/* Default redirect */}
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </div>
+        </Router>
+      </ShopProvider>
+    </AuthProvider>
+  )
 }
+
+export default App
