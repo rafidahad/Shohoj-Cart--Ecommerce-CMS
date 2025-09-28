@@ -72,3 +72,9 @@ services:
         value: noreply@shohojcart.com
       - key: MAIL_FROM_NAME
         value: ShohojCart
+
+      # Gemini Configuration
+      - key: GEMINI_API_KEY
+        value: "AIzaSyCCQZpKOd1FC-xyhYPYmRdbTNvVFaa-LrY"
+      - key: GEMINI_MODEL
+        value: models/gemini-2.0-flash
